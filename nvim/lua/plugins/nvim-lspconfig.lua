@@ -8,6 +8,15 @@ return {
   opts = {
     servers = {
       postgres_lsp = {},
+      vtsls = {
+        settings = {
+          typescript = {
+            preferences = {
+              importModuleSpecifierPreference = "relative",
+            },
+          },
+        },
+      },
     },
   },
 }

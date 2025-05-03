@@ -9,9 +9,7 @@
 # fish config related included files
 !fish/
 !fish/completions/
-!fish/completions/fzf_configure_bindings.fish
 !fish/conf.d/
-!fish/conf.d/fzf.fish
 !fish/conf.d/01-variables.fish
 !fish/conf.d/02-aliases.fish
 !fish/conf.d/03-brew.fish
@@ -21,7 +19,6 @@
 !fish/fish_plugins
 !fish/fish_variables
 !fish/functions/
-!fish/functions/fzf_configure_bindings.fish
 !fish/functions/generate_docker_aliases.fish
 !fish/themes/
 
@@ -52,5 +49,9 @@
 !nvim/lua/plugins/
 !nvim/lua/plugins/*
 !nvim/stylua.toml
+!nvim/.neoconf.json
 !zellij/
 !zellij/config.kdl
+!bootstrap-config.sh
+!bootstrap.fish
+!README.md

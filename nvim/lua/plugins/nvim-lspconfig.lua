@@ -12,6 +12,8 @@ return {
         settings = {
           typescript = {
             preferences = {
+              includeCompletionsForModuleExports = true,
+              includeCompletionsForImportStatements = true,
               importModuleSpecifierPreference = "relative",
             },
           },

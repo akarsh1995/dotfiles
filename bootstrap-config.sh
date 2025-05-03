@@ -18,9 +18,9 @@ echo "Cloning the configuration repository..."
 git clone "$REPO_URL" "$CONFIG_DIR"
 
 # Step 3: Bootstrap the configuration
-if [ -f "$CONFIG_DIR/bootstrap.sh" ]; then
+if [ -f "$CONFIG_DIR/bootstrap.fish" ]; then
   echo "Running bootstrap script..."
-  fish "$CONFIG_DIR/bootstrap.sh"
+  fish "$CONFIG_DIR/bootstrap.fish"
 else
   echo "No bootstrap script found. Configuration setup complete."
 fi

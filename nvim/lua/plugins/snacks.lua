@@ -1,7 +1,8 @@
 return {
   "folke/snacks.nvim",
-  ---@type snacks.Config
   opts = {
+
+    ---@class snacks.explorer.Config
     explorer = {
       show_hidden = true, -- Show hidden files
       width = 30, -- Set the width of the explorer window

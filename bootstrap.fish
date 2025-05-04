@@ -77,13 +77,19 @@ else
     echo "fish_plugins file not found, skipping fisher plugins installation"
 end
 
+# decrypt secrets file
 if test -f $HOME/.config/fish/conf.d/00-secrets.fish.gpg
-    if test ! -f $HOME/.config/fish/conf.d/00-secrets.fish
-        echo "Decrypting secrets file..."
-        gpg --decrypt --output $HOME/.config/fish/conf.d/00-secrets.fish $HOME/.config/fish/conf.d/00-secrets.fish.gpg
+    # check if gpg key is already imported
+    if test (gpg --list-keys | grep $gpg_key)
+        if test ! -f $HOME/.config/fish/conf.d/00-secrets.fish
+            echo "Decrypting secrets file..."
+            gpg --decrypt --output $HOME/.config/fish/conf.d/00-secrets.fish $HOME/.config/fish/conf.d/00-secrets.fish.gpg
+        else
+            echo "secrets file already decrypted"
+        end
     else
-        echo "secrets file already decrypted"
+        echo "Please import gpg keys first then run this script again"
     end
 else
-    echo "secrets file not found, skipping decryption"
+    echo "encrypted secrets file not found, skipping decryption"
 end

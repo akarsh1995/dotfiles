@@ -32,7 +32,6 @@
 !nnn/bookmarks/
 !nnn/mounts/
 !nnn/plugins/
-!nnn/plugins/*
 !nnn/sessions/
 !nvim/
 !nvim/LICENSE

@@ -2,6 +2,8 @@
 
 set -x email "akarsh.1995.02@gmail.com"
 
+set gpg_key F3BDDBCEEEE18160
+
 # if not brew installed already then install it
 if test ! -f /opt/homebrew/bin/brew
     echo "Installing Homebrew..."
@@ -37,7 +39,7 @@ echo "
 [user]
   name = Akarsh Jain
   email = $email
-  signingkey = F3BDDBCEEEE18160
+  signingkey = $gpg_key
 [commit]
 	gpgsign = true
 [gpg]

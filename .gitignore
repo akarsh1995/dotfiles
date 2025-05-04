@@ -15,6 +15,7 @@
 !fish/conf.d/03-brew.fish
 !fish/conf.d/starship.fish
 !fish/conf.d/zoxide.fish
+!fish/conf.d/00-secrets.fish.gpg
 !fish/config.fish
 !fish/fish_plugins
 !fish/fish_variables
@@ -56,3 +57,4 @@
 !bootstrap.fish
 !README.md
 !brew/brew-packages
+

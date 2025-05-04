@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sudo -v
+
 # Script to clone the .config repository and bootstrap the configuration
 
 # Variables
@@ -17,7 +19,23 @@ fi
 echo "Cloning the configuration repository..."
 git clone "$REPO_URL" "$CONFIG_DIR"
 
-# Step 3: Bootstrap the configuration
+# Step 3: Install Homebrew if not already installed
+if ! command -v /opt/homebrew/bin/brew &>/dev/null; then
+  echo "Installing Homebrew..."
+  # Install Homebrew
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+
+# Install Fish shell if not already installed
+if ! command -v fish &>/dev/null; then
+  echo "Installing Fish shell..."
+  # Install Fish shell
+  brew install fish
+else
+  echo "Fish shell is already installed."
+fi
+
+# Step 4: Bootstrap the configuration
 if [ -f "$CONFIG_DIR/bootstrap.fish" ]; then
   echo "Running bootstrap script..."
   fish "$CONFIG_DIR/bootstrap.fish"

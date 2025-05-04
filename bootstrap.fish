@@ -33,9 +33,19 @@ begin
 end | crontab -
 
 # This script sets up a git configuration file with user information.
-echo "[user]
-name = Akarsh Jain
-email = $email" >$HOME/.gitconfig
+echo "
+[user]
+  name = Akarsh Jain
+  email = $email
+  signingkey = F3BDDBCEEEE18160
+[commit]
+	gpgsign = true
+[gpg]
+	program = gpg
+[tag]
+	gpgSign = true
+" >$HOME/.gitconfig
+
 
 # install nnn plugins if plugins directory empty
 if test ! -d $HOME/.config/nnn/plugins

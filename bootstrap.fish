@@ -1,3 +1,17 @@
+sudo -v
+
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# install brew packages
+if test -f $HOME/.config/brew/brew-packages
+    for package in (cat $HOME/.config/brew/brew-packages)
+        /opt/homebrew/bin/brew install $package
+        sudo -v
+    end
+else
+    echo "brew-packages file not found skipping brew packages installation"
+end
+
 begin
     crontab -l 2>/dev/null
     # This script sets up a cron jobs to automatically commit and push changes to the .config directory every hour.

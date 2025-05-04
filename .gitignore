@@ -20,6 +20,7 @@
 !fish/fish_variables
 !fish/functions/
 !fish/functions/generate_docker_aliases.fish
+!fish/functions/add_secret.fish
 !fish/themes/
 
 !helix/

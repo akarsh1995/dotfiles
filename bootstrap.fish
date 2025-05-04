@@ -9,3 +9,6 @@ end | crontab -
 echo "[user]
 name = Akarsh Jain
 email = akarsh.1995.02@gmail.com" >$HOME/.gitconfig
+
+# install nnn plugins
+sh -c "$(curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/plugins/getplugs)"

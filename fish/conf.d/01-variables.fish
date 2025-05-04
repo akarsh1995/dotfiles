@@ -36,3 +36,13 @@ set -gx XDG_PICTURES_DIR $HOME/Pictures
 set -gx XDG_VIDEOS_DIR $HOME/Videos
 
 set -gx EDITOR nvim
+
+set -l plugins \
+    'f:finder' \
+    'o:fzopen' \
+    'p:preview-tabbed' \
+    'd:diffs' \
+    't:nmount' \
+    'v:imgview'
+
+set -gx NNN_PLUG (string join ';' $plugins)

@@ -31,7 +31,7 @@ begin
     # This script sets up a cron jobs to automatically commit and push changes to the .config directory every hour.
     echo "0 * * * * $(which fish) -c 'cd $HOME/.config && if test (git status --short | wc -l) -gt 0; git add -A; git commit -m \"\$(date +'\%Y-\%m-\%d')\"; git push origin main; end'"
     echo "0 0 * * * $(which docker) container prune -f"
-    echo "0 * * * * $(which gpg) --yes --encrypt --recipient \"$email\" $HOME/.config/fish/conf.d/00-secrets.fish"
+    echo "0 * * * * $(which fish) -c 'set -l SECRETS $HOME/.config/fish/conf.d/00-secrets.fish; set -l ENC \$SECRETS.gpg; if not test -f \$ENC || not $(which gpg) --decrypt \$ENC 2>/dev/null | diff -q - \$SECRETS >/dev/null; $(which gpg) --yes --encrypt --recipient \"$email\" \$SECRETS; end'"
 end | crontab -
 
 # This script sets up a git configuration file with user information.
@@ -93,3 +93,4 @@ if test -f $HOME/.config/fish/conf.d/00-secrets.fish.gpg
 else
     echo "encrypted secrets file not found, skipping decryption"
 end
+

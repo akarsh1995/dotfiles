@@ -3,4 +3,5 @@ if status is-interactive
     alias eu-bhishma "docker-compose -f $AYR_DIR/integration/docker-compose.yml up"
     alias ed "docker-compose -f $AYR_DIR/integration/docker-compose.yml down"
     fzf_configure_bindings --directory=\cf --variables=\e\cv
+    nvm use v20.13.1
 end

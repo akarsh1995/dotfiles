@@ -14,7 +14,7 @@ return {
             preferences = {
               includeCompletionsForModuleExports = true,
               includeCompletionsForImportStatements = true,
-              importModuleSpecifierPreference = "relative",
+              importModuleSpecifier = "relative",
             },
           },
         },

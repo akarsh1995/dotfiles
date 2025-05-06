@@ -15,6 +15,7 @@ return {
               includeCompletionsForModuleExports = true,
               includeCompletionsForImportStatements = true,
               importModuleSpecifier = "relative",
+              preferTypeOnlyAutoImports = true,
             },
           },
         },

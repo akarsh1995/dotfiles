@@ -3,8 +3,7 @@ return {
   opts = {
     ensure_installed = {
       "postgrestools",
-      "sqlfluff",
+      "pgformatter",
     },
   },
 }
-

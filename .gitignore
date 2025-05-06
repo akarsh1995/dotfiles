@@ -43,12 +43,14 @@
 !nvim/lazyvim.json
 !nvim/lua/
 !nvim/lua/config/
-!nvim/lua/config/autocmds.lua
-!nvim/lua/config/keymaps.lua
-!nvim/lua/config/lazy.lua
-!nvim/lua/config/options.lua
+!nvim/lua/config/*.lua
 !nvim/lua/plugins/
-!nvim/lua/plugins/*
+!nvim/lua/plugins/*.lua
+
+!nvim/queries/
+!nvim/queries/*/
+!nvim/queries/*/*.scm
+
 !nvim/stylua.toml
 !nvim/.neoconf.json
 !zellij/
@@ -56,5 +58,7 @@
 !bootstrap-config.sh
 !bootstrap.fish
 !README.md
+
+!brew/
 !brew/brew-packages
 

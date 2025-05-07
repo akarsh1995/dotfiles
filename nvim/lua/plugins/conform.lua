@@ -3,6 +3,7 @@ return {
   opts = {
     formatters_by_ft = {
       sql = { "pg_format" },
+      typescript = {},
     },
   },
 }

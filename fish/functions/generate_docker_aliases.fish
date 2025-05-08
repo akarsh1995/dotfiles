@@ -1,11 +1,17 @@
 function generate_docker_aliases
-    # Ensure the compose file is provided as an argument
-    if test (count $argv) -ne 1
-        echo "Usage: generate_docker_aliases <compose_file>"
+    # Check for correct arguments
+    if test (count $argv) -lt 1 -o (count $argv) -gt 2
+        echo "Usage: generate_docker_aliases <compose_file> [profile]"
         return 1
     end
 
     set -l compose_file $argv[1]
+    set -l profile_arg ""
+
+    # Check if profile is provided
+    if test (count $argv) -eq 2
+        set profile_arg "--profile="$argv[2]
+    end
 
     # Check if the provided compose file exists
     if not test -f $compose_file
@@ -13,8 +19,8 @@ function generate_docker_aliases
         return 1
     end
 
-    # Extract service names from the provided docker-compose file
-    set -l services (docker-compose -f $compose_file config --services)
+    # Extract service names from the provided docker-compose file, with optional profile
+    set -l services (docker-compose -f $compose_file $profile_arg config --services)
 
     # Generate aliases for each service
     for service in $services

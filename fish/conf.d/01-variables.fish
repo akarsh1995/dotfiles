@@ -49,3 +49,5 @@ set -gx NNN_PLUG (string join ';' $plugins)
 set -gx GPG_TTY (tty)
 set -gx PASSWORD_STORE_ENABLE_EXTENSIONS true
 set -gx PASSWORD_STORE_DIR $HOME/.config/pass
+set -gx JAVA_HOME /Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
+set -gx ANDROID_HOME /opt/homebrew/share/android-commandlinetools

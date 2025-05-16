@@ -1,4 +1,8 @@
 if status is-interactive
+    # Load secrets from the encrypted JSON file
+    if type -q load_secrets
+        load_secrets
+    end
     generate_docker_aliases $AYR_DIR/integration/docker-compose.yml be-lite
     alias eu-bhishma "docker compose -f $AYR_DIR/integration/docker-compose.yml --profile=be-lite up -d"
     alias eu-fe "docker compose -f $AYR_DIR/integration/docker-compose.yml --profile=fe up -d"

@@ -16,15 +16,23 @@
 !fish/conf.d/03-brew.fish
 !fish/conf.d/starship.fish
 !fish/conf.d/zoxide.fish
-!fish/conf.d/00-secrets.fish.gpg
+!fish/conf.d/secrets.json.gpg
+
 !fish/conf.d/fnm.fish
 
 !fish/config.fish
 !fish/fish_plugins
 !fish/fish_variables
+
 !fish/functions/
 !fish/functions/generate_docker_aliases.fish
 !fish/functions/add_secret.fish
+!fish/functions/delete_secret.fish
+!fish/functions/export_as_secret.fish
+!fish/functions/get_secret.fish
+!fish/functions/list_secrets.fish
+!fish/functions/load_secrets.fish
+
 !fish/themes/
 
 !helix/

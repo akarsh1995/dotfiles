@@ -1,5 +1,8 @@
 # a function that adds a secret to the secrets file
 function add_secret
+    # Define paths for secrets
+    set -l encrypted_json_path $XDG_CONFIG_HOME/fish/conf.d/secrets.json.gpg
+    
     # check if the first argument is empty
     if test -z "$argv[1]"
         echo "Please provide a secret name"
@@ -12,42 +15,57 @@ function add_secret
         return 1
     end
 
-    # Check if secret already exists
-    if grep -q "^set -gx $argv[1] " $SECRET_VARS_PATH
-        # Get existing comment if any
-        set -l existing_comment (grep "^set -gx $argv[1] " $SECRET_VARS_PATH | grep -o "#.*\$" || echo "")
-
-        # Replace the existing secret
-        if test (count $argv) -eq 2
-            # Keep existing comment if there is one
-            if test -n "$existing_comment"
-                sed -i "" "s|^set -gx $argv[1] .*|set -gx $argv[1] \"$argv[2]\" $existing_comment|" $SECRET_VARS_PATH
-            else
-                sed -i "" "s|^set -gx $argv[1] .*|set -gx $argv[1] \"$argv[2]\"|" $SECRET_VARS_PATH
-            end
-        else
-            # Use new comment
-            sed -i "" "s|^set -gx $argv[1] .*|set -gx $argv[1] \"$argv[2]\" # $argv[3]|" $SECRET_VARS_PATH
+    # Prepare current JSON content
+    set -l json_content "{}"
+    
+    # If we have an encrypted file, decrypt it to memory
+    if test -f $encrypted_json_path
+        set json_content (gpg --quiet --decrypt $encrypted_json_path 2>/dev/null)
+        if test $status -ne 0
+            echo "Failed to decrypt secrets file"
+            return 1
         end
-
-        # Update the variable in the current environment
-        set -gx $argv[1] $argv[2]
-
-        echo "Secret updated"
-        return 0
-    else
-        # Check if description is provided for new secret
+    end
+    
+    # Check if a description is provided for new secrets
+    if not echo $json_content | jq -e --arg key "$argv[1]" 'has($key)' > /dev/null
         if test (count $argv) -lt 3 -o -z "$argv[3]"
             echo "Please provide a description when adding a new secret"
             return 1
         end
-
-        # Add the secret with description
-        echo "set -gx $argv[1] \"$argv[2]\" # $argv[3]" >>$SECRET_VARS_PATH
-
-        # Set the variable in the current environment
-        set -gx $argv[1] $argv[2]
-
-        echo "Secret added"
     end
+    
+    # Read the description, either new or existing
+    set -l description ""
+    if test (count $argv) -ge 3
+        set description $argv[3]
+    else
+        # Try to get the existing description
+        set -l existing (echo $json_content | jq -r --arg key "$argv[1]" '.[$key].description // empty')
+        if test -n "$existing"
+            set description $existing
+        end
+    end
+
+    # Update the JSON with the new secret and encrypt directly from memory to file
+    echo $json_content | jq --arg key "$argv[1]" --arg value "$argv[2]" --arg desc "$description" \
+       '.[$key] = {"value": $value, "description": $desc}' | \
+       gpg --quiet --yes --recipient "Akarsh Jain" --encrypt --output $encrypted_json_path
+    
+    if test $status -ne 0
+        echo "Failed to encrypt secrets file"
+        return 1
+    end
+    
+    # Check if the secret was added/updated successfully
+    set -l new_content (gpg --quiet --decrypt $encrypted_json_path 2>/dev/null)
+    if not echo $new_content | jq -e --arg key "$argv[1]" 'has($key)' > /dev/null
+        echo "Failed to add/update secret"
+        return 1
+    end
+
+    # Set the variable in the current environment
+    set -gx $argv[1] $argv[2]
+
+    echo "Secret added/updated successfully"
 end

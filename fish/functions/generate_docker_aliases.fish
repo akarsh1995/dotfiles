@@ -24,7 +24,7 @@ function generate_docker_aliases
 
     # Generate aliases for each service
     for service in $services
-        alias "dc-$service" "docker-compose -f $compose_file up $service"
+        alias "dc-$service" "docker-compose -f $compose_file up $service -d"
         alias "dc-$service-build" "docker-compose -f $compose_file up --build $service"
     end
 end

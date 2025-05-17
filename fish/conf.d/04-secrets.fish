@@ -2,4 +2,3 @@
 if type -q secret_load
     secret_load
 end
-

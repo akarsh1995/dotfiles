@@ -1,4 +1,5 @@
 # Completion for secret_list function
 
-# This function doesn't take arguments, so we just provide a description
-complete -c secret_list -f -d "List all available secrets without showing their values"
+# Add completion for secret_list options
+complete -c secret_list -f -d "List all available secrets"
+complete -c secret_list -l with-masked-values -f -d "Show masked values for secrets"

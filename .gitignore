@@ -17,10 +17,10 @@
 !fish/completions/secret_load.fish
 
 !fish/conf.d/
-!fish/conf.d/00-secrets.fish
 !fish/conf.d/01-variables.fish
 !fish/conf.d/02-aliases.fish
 !fish/conf.d/03-brew.fish
+!fish/conf.d/04-secrets.fish
 !fish/conf.d/starship.fish
 !fish/conf.d/zoxide.fish
 !fish/conf.d/secrets.json.gpg
@@ -35,6 +35,7 @@
 !fish/functions/secret_get.fish
 !fish/functions/secret_list.fish
 !fish/functions/secret_load.fish
+!fish/functions/config_auto_commit_and_push.fish
 
 !fish/themes/
 

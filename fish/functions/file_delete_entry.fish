@@ -1,7 +1,7 @@
 # Function to delete an entry from the encrypted files registry
 function file_delete_entry
     # Define paths for encrypted files registry
-    set -l registry_path $XDG_CONFIG_HOME/fish/conf.d/encrypted_files.json.gpg
+    set -l registry_path $XDG_CONFIG_HOME/fish/secure/files/registry.json.gpg
     
     # check if the first argument is empty (original file path)
     if test -z "$argv[1]"

@@ -1,6 +1,6 @@
 # Function to load all secrets from the encrypted JSON file
 function secret_load
-    set -l encrypted_json_path $XDG_CONFIG_HOME/fish/conf.d/secrets.json.gpg
+    set -l encrypted_json_path $XDG_CONFIG_HOME/fish/secure/secrets/secrets.json.gpg
     
     if test ! -f $encrypted_json_path
         echo "No encrypted secrets file found. Use secret_add to create one."

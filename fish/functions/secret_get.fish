@@ -6,7 +6,7 @@ function secret_get
         return 1
     end
     
-    set -l encrypted_json_path $XDG_CONFIG_HOME/fish/conf.d/secrets.json.gpg
+    set -l encrypted_json_path $XDG_CONFIG_HOME/fish/secure/secrets/secrets.json.gpg
     
     if test ! -f $encrypted_json_path
         echo "No encrypted secrets file found."

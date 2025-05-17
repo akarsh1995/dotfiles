@@ -1,6 +1,6 @@
 # Completions for file_restore function
 function __file_restore_candidates
-    set -l registry_path $XDG_CONFIG_HOME/fish/conf.d/encrypted_files.json.gpg
+    set -l registry_path $XDG_CONFIG_HOME/fish/secure/files/registry.json.gpg
     if test -f $registry_path
         gpg --quiet --decrypt $registry_path 2>/dev/null | jq -r 'keys[]'
     end

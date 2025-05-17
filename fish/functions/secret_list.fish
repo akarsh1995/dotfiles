@@ -1,6 +1,6 @@
 # Function to list all available secrets with optional masked values
 function secret_list
-    set -l encrypted_json_path $XDG_CONFIG_HOME/fish/conf.d/secrets.json.gpg
+    set -l encrypted_json_path $XDG_CONFIG_HOME/fish/secure/secrets/secrets.json.gpg
     set -l show_masked false
     
     # Parse arguments

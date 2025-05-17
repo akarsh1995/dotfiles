@@ -1,7 +1,7 @@
 # Function to restore multiple or all encrypted files
 function file_restore_all
     # Define paths for encrypted files registry
-    set -l registry_path $XDG_CONFIG_HOME/fish/conf.d/encrypted_files.json.gpg
+    set -l registry_path $XDG_CONFIG_HOME/fish/secure/files/registry.json.gpg
     set -l pattern "*"  # Default pattern to match all files
     set -l output_dir ""  # Default is to restore to original locations
     

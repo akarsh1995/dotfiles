@@ -1,6 +1,6 @@
 # Function to list all encrypted files in the registry
 function file_list_encrypted
-    set -l registry_path $XDG_CONFIG_HOME/fish/conf.d/encrypted_files.json.gpg
+    set -l registry_path $XDG_CONFIG_HOME/fish/secure/files/registry.json.gpg
     set -l show_details false
     
     # Parse arguments

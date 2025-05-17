@@ -1,7 +1,7 @@
 # a function that encrypts a file and stores it in the encrypted registry
 function file_encrypt
     # Define paths for encrypted files registry
-    set -l registry_path $XDG_CONFIG_HOME/fish/conf.d/encrypted_files.json.gpg
+    set -l registry_path $XDG_CONFIG_HOME/fish/secure/files/registry.json.gpg
     
     # check if the first argument is empty (source file)
     if test -z "$argv[1]"

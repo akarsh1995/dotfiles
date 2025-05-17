@@ -4,7 +4,7 @@
 if not functions -q __fish_complete_secrets
     function __fish_complete_secrets
         # Decrypt secrets directly to memory and extract keys (secret names)
-        set -l encrypted_json_path $XDG_CONFIG_HOME/fish/conf.d/secrets.json.gpg
+        set -l encrypted_json_path $XDG_CONFIG_HOME/fish/secure/secrets/secrets.json.gpg
         
         if test -f $encrypted_json_path
             # Get the list of secret names

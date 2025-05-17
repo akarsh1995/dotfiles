@@ -1,7 +1,7 @@
 # Function to delete a secret
 function secret_delete
     # Define paths for secrets
-    set -l encrypted_json_path $XDG_CONFIG_HOME/fish/conf.d/secrets.json.gpg
+    set -l encrypted_json_path $XDG_CONFIG_HOME/fish/secure/secrets/secrets.json.gpg
     
     # check if the first argument is empty
     if test -z "$argv[1]"

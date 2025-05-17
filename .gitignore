@@ -28,10 +28,15 @@
 !fish/conf.d/04-secrets.fish
 !fish/conf.d/starship.fish
 !fish/conf.d/zoxide.fish
-!fish/conf.d/secrets.json.gpg
-!fish/conf.d/encrypted_files.json.gpg
 !fish/conf.d/secrets_functions_path.fish
 !fish/conf.d/fnm.fish
+
+# Secure files and directories
+!fish/secure/
+!fish/secure/files/
+!fish/secure/secrets/
+!fish/secure/files/registry.json.gpg
+!fish/secure/secrets/secrets.json.gpg
 
 !fish/functions/
 !fish/functions/generate_docker_aliases.fish

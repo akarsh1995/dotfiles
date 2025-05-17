@@ -1,5 +1,5 @@
 # Function to list all available secrets without showing their values
-function list_secrets
+function secret_list
     set -l encrypted_json_path $XDG_CONFIG_HOME/fish/conf.d/secrets.json.gpg
     
     if test ! -f $encrypted_json_path

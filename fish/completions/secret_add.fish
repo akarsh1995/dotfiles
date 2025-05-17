@@ -1,6 +1,6 @@
-# Completion for add_secret function
+# Completion for secret_add function
 
-# Reuse the __fish_complete_secrets function from delete_secret.fish if it exists
+# Reuse the __fish_complete_secrets function if it exists
 if not functions -q __fish_complete_secrets
     function __fish_complete_secrets
         # Decrypt secrets directly to memory and extract keys (secret names)
@@ -17,5 +17,5 @@ if not functions -q __fish_complete_secrets
     end
 end
 
-# Register completion for add_secret command - allows completing existing secret names for updating
-complete -c add_secret -f -a "(__fish_complete_secrets)" -d "Update existing secret"
+# Register completion for secret_add command - allows completing existing secret names for updating
+complete -c secret_add -f -a "(__fish_complete_secrets)" -d "Update existing secret"

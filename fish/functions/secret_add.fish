@@ -1,5 +1,5 @@
 # a function that adds a secret to the secrets file
-function add_secret
+function secret_add
     # Define paths for secrets
     set -l encrypted_json_path $XDG_CONFIG_HOME/fish/conf.d/secrets.json.gpg
     

@@ -1,8 +1,8 @@
 # Function to export an existing environment variable as a secret
-function export_as_secret
+function secret_export
     # Check if arguments are provided
     if test (count $argv) -lt 2
-        echo "Usage: export_as_secret ENV_VAR_NAME description"
+        echo "Usage: secret_export ENV_VAR_NAME description"
         return 1
     end
     
@@ -22,7 +22,7 @@ function export_as_secret
     set -l env_var_value $$env_var_name
     
     # Add as secret
-    add_secret $env_var_name $env_var_value $description
+    secret_add $env_var_name $env_var_value $description
     
     echo "Environment variable $env_var_name exported as a secret"
 end

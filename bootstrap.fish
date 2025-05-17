@@ -29,7 +29,8 @@ end
 
 begin
     # This script sets up a cron jobs to automatically commit and push changes to the .config directory every hour.
-    echo "0 * * * * $(which fish) -c 'cd $HOME/.config && if test (git status --short | wc -l) -gt 0; git add -A; git commit -m \"\$(date +'\%Y-\%m-\%d')\"; git push origin main; end'"
+    # echo "0 18 * * * $(which fish) -c 'cd $HOME/.config && if test (git status --short | wc -l) -gt 0; git add -A; git commit -m \"\$(date +'\%Y-\%m-\%d')\"; git push origin main; end'"
+    echo "0 18 * * * $(which fish) -c config_auto_commit_and_push"
     echo "0 0 * * * $(which docker) container prune -f"
 end | crontab -
 
@@ -75,21 +76,3 @@ if test -f $HOME/.config/fish/fish_plugins
 else
     echo "fish_plugins file not found, skipping fisher plugins installation"
 end
-
-# decrypt secrets file
-if test -f $HOME/.config/fish/conf.d/00-secrets.fish.gpg
-    # check if gpg key is already imported
-    if test (gpg --list-keys | grep $gpg_key)
-        if test ! -f $HOME/.config/fish/conf.d/00-secrets.fish
-            echo "Decrypting secrets file..."
-            gpg --decrypt --output $HOME/.config/fish/conf.d/00-secrets.fish $HOME/.config/fish/conf.d/00-secrets.fish.gpg
-        else
-            echo "secrets file already decrypted"
-        end
-    else
-        echo "Please import gpg keys first then run this script again"
-    end
-else
-    echo "encrypted secrets file not found, skipping decryption"
-end
-

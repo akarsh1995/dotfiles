@@ -1,4 +1,4 @@
-# Completion for delete_secret function
+# Completion for secret_delete function
 
 function __fish_complete_secrets
     # Decrypt secrets directly to memory and extract keys (secret names)
@@ -14,5 +14,5 @@ function __fish_complete_secrets
     end
 end
 
-# Register completion for delete_secret command
-complete -c delete_secret -f -a "(__fish_complete_secrets)" -d "Stored secret"
+# Register completion for secret_delete command
+complete -c secret_delete -f -a "(__fish_complete_secrets)" -d "Stored secret"

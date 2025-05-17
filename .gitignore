@@ -9,32 +9,32 @@
 # fish config related included files
 !fish/
 !fish/completions/
-!fish/completions/add_secret.fish
-!fish/completions/delete_secret.fish
-!fish/completions/export_as_secret.fish
-!fish/completions/get_secret.fish
-!fish/completions/list_secrets.fish
-!fish/completions/load_secrets.fish
+!fish/completions/secret_add.fish
+!fish/completions/secret_delete.fish
+!fish/completions/secret_export.fish
+!fish/completions/secret_get.fish
+!fish/completions/secret_list.fish
+!fish/completions/secret_load.fish
 
 !fish/conf.d/
+!fish/conf.d/00-secrets.fish
 !fish/conf.d/01-variables.fish
 !fish/conf.d/02-aliases.fish
 !fish/conf.d/03-brew.fish
 !fish/conf.d/starship.fish
 !fish/conf.d/zoxide.fish
 !fish/conf.d/secrets.json.gpg
-!fish/conf.d/secrets_path.fish
+!fish/conf.d/secrets_functions_path.fish
 !fish/conf.d/fnm.fish
 
 !fish/functions/
 !fish/functions/generate_docker_aliases.fish
-!fish/functions/secrets
-!fish/functions/secrets/add_secret.fish
-!fish/functions/secrets/delete_secret.fish
-!fish/functions/secrets/export_as_secret.fish
-!fish/functions/secrets/get_secret.fish
-!fish/functions/secrets/list_secrets.fish
-!fish/functions/secrets/load_secrets.fish
+!fish/functions/secret_add.fish
+!fish/functions/secret_delete.fish
+!fish/functions/secret_export.fish
+!fish/functions/secret_get.fish
+!fish/functions/secret_list.fish
+!fish/functions/secret_load.fish
 
 !fish/themes/
 

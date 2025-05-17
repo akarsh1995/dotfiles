@@ -1,5 +1,5 @@
 # Function to delete a secret
-function delete_secret
+function secret_delete
     # Define paths for secrets
     set -l encrypted_json_path $XDG_CONFIG_HOME/fish/conf.d/secrets.json.gpg
     

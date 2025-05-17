@@ -1,5 +1,5 @@
 # Function to retrieve a specific secret value
-function get_secret
+function secret_get
     # check if the first argument is empty
     if test -z "$argv[1]"
         echo "Please provide the secret name to retrieve"

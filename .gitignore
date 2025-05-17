@@ -17,7 +17,7 @@
 !fish/conf.d/starship.fish
 !fish/conf.d/zoxide.fish
 !fish/conf.d/secrets.json.gpg
-
+!fish/conf.d/secrets_path.fish
 !fish/conf.d/fnm.fish
 
 !fish/config.fish
@@ -26,12 +26,13 @@
 
 !fish/functions/
 !fish/functions/generate_docker_aliases.fish
-!fish/functions/add_secret.fish
-!fish/functions/delete_secret.fish
-!fish/functions/export_as_secret.fish
-!fish/functions/get_secret.fish
-!fish/functions/list_secrets.fish
-!fish/functions/load_secrets.fish
+!fish/functions/secrets
+!fish/functions/secrets/add_secret.fish
+!fish/functions/secrets/delete_secret.fish
+!fish/functions/secrets/export_as_secret.fish
+!fish/functions/secrets/get_secret.fish
+!fish/functions/secrets/list_secrets.fish
+!fish/functions/secrets/load_secrets.fish
 
 !fish/themes/
 

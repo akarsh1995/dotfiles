@@ -15,6 +15,11 @@
 !fish/completions/secret_get.fish
 !fish/completions/secret_list.fish
 !fish/completions/secret_load.fish
+!fish/completions/file_delete_entry.fish
+!fish/completions/file_encrypt.fish
+!fish/completions/file_list_encrypted.fish
+!fish/completions/file_restore_all.fish
+!fish/completions/file_restore.fish
 
 !fish/conf.d/
 !fish/conf.d/01-variables.fish
@@ -24,6 +29,7 @@
 !fish/conf.d/starship.fish
 !fish/conf.d/zoxide.fish
 !fish/conf.d/secrets.json.gpg
+!fish/conf.d/encrypted_files.json.gpg
 !fish/conf.d/secrets_functions_path.fish
 !fish/conf.d/fnm.fish
 
@@ -36,6 +42,11 @@
 !fish/functions/secret_list.fish
 !fish/functions/secret_load.fish
 !fish/functions/config_auto_commit_and_push.fish
+!fish/functions/file_delete_entry.fish
+!fish/functions/file_encrypt.fish
+!fish/functions/file_list_encrypted.fish
+!fish/functions/file_restore_all.fish
+!fish/functions/file_restore.fish
 
 !fish/themes/
 

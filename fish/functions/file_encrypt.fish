@@ -55,4 +55,44 @@ function file_encrypt
     
     echo "File encrypted successfully and stored in registry"
     echo "Original file path: $abs_source_path"
+    
+    # Check if --remove flag was used or ask the user about removing the original file
+    set -l remove_file false
+    
+    for arg in $argv
+        if test "$arg" = "--remove"
+            set remove_file true
+            break
+        end
+    end
+    
+    if not $remove_file
+        read -l -P "Remove original file '$argv[1]'? [y/N] " confirm
+        if string match -qi "y" $confirm
+            set remove_file true
+        end
+    end
+    
+    # Securely remove the original file if requested
+    if $remove_file
+        # Check if shred command exists
+        if command -sq shred
+            # Use shred to securely delete the file (-u removes the file after overwriting)
+            shred -u -z "$argv[1]"
+            if test $status -eq 0
+                echo "Original file securely shredded."
+            else
+                echo "Warning: Failed to securely shred original file."
+            end
+        else
+            # If shred doesn't exist, use rm but warn the user
+            echo "Warning: 'shred' command not found. Using standard rm which is less secure."
+            rm "$argv[1]"
+            if test $status -eq 0
+                echo "Original file removed (not securely shredded)."
+            else
+                echo "Warning: Failed to remove original file."
+            end
+        end
+    end
 end

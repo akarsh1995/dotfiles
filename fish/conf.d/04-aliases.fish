@@ -2,7 +2,6 @@ alias ghcs 'gh copilot suggest -t shell'
 alias open_recent_pr 'gh pr list --state open --author "@me" --json number | jq -r ".[0].number" | xargs gh pr view --web'
 alias gp 'git push origin HEAD'
 alias open_repo 'gh repo view --web'
-alias rm shred
 
 # user defined aliases
 alias credit_test_user "npm run setup:user -- --walletAddress=$LOCAL_TEST_USER --token=USDCBC --amountInHr=10000"

@@ -9,18 +9,6 @@
 # fish config related included files
 !fish/
 !fish/completions/
-!fish/completions/secret_add.fish
-!fish/completions/secret_delete.fish
-!fish/completions/secret_edit.fish
-!fish/completions/secret_export.fish
-!fish/completions/secret_get.fish
-!fish/completions/secret_list.fish
-!fish/completions/secret_load.fish
-!fish/completions/file_delete_entry.fish
-!fish/completions/file_encrypt.fish
-!fish/completions/file_list_encrypted.fish
-!fish/completions/file_restore_all.fish
-!fish/completions/file_restore.fish
 
 !fish/conf.d/
 !fish/conf.d/01-variables.fish
@@ -48,19 +36,13 @@
 
 !fish/functions/
 !fish/functions/generate_docker_aliases.fish
-!fish/functions/secret_add.fish
-!fish/functions/secret_delete.fish
-!fish/functions/secret_edit.fish
-!fish/functions/secret_export.fish
-!fish/functions/secret_get.fish
-!fish/functions/secret_list.fish
-!fish/functions/secret_load.fish
 !fish/functions/config_auto_commit_and_push.fish
-!fish/functions/file_delete_entry.fish
-!fish/functions/file_encrypt.fish
-!fish/functions/file_list_encrypted.fish
-!fish/functions/file_restore_all.fish
-!fish/functions/file_restore.fish
+!fish/functions/secret.fish
+!fish/functions/filecrypt.fish
+
+# Completions for custom functions
+!fish/completions/secret.fish
+!fish/completions/filecrypt.fish
 
 !fish/themes/
 

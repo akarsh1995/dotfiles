@@ -11,6 +11,7 @@
 !fish/completions/
 !fish/completions/secret_add.fish
 !fish/completions/secret_delete.fish
+!fish/completions/secret_edit.fish
 !fish/completions/secret_export.fish
 !fish/completions/secret_get.fish
 !fish/completions/secret_list.fish
@@ -49,6 +50,7 @@
 !fish/functions/generate_docker_aliases.fish
 !fish/functions/secret_add.fish
 !fish/functions/secret_delete.fish
+!fish/functions/secret_edit.fish
 !fish/functions/secret_export.fish
 !fish/functions/secret_get.fish
 !fish/functions/secret_list.fish

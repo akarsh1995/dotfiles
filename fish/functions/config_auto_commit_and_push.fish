@@ -21,6 +21,7 @@ function config_auto_commit_and_push
         git commit -m "Auto commit on $now on branch $branch"
         # push the changes to the remote repository
         git push origin $branch
+        git push codeberg $branch
     else
         echo "No changes to commit"
     end

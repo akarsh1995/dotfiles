@@ -13,12 +13,10 @@
 !fish/conf.d/
 !fish/conf.d/01-variables.fish
 !fish/conf.d/02-brew.fish
-!fish/conf.d/03-secrets.fish
 !fish/conf.d/04-aliases.fish
 !fish/conf.d/05-pwstore.fish
 !fish/conf.d/starship.fish
 !fish/conf.d/zoxide.fish
-!fish/conf.d/secrets_functions_path.fish
 !fish/conf.d/fnm.fish
 
 # Secure files and directories

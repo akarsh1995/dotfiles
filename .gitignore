@@ -37,10 +37,7 @@
 !fish/functions/
 !fish/functions/generate_docker_aliases.fish
 !fish/functions/config_auto_commit_and_push.fish
-!fish/functions/secret.fish
 
-# Completions for custom functions
-!fish/completions/secret.fish
 
 !fish/themes/
 

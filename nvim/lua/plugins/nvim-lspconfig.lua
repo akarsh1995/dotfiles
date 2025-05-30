@@ -7,7 +7,8 @@ return {
   },
   opts = {
     servers = {
-      postgres_lsp = {},
+      -- postgres_lsp = { enabled = true },
+      sqls = { enabled = true },
       vtsls = {
         settings = {
           typescript = {

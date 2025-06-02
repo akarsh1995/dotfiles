@@ -2,6 +2,7 @@ alias ghcs 'gh copilot suggest -t shell'
 alias open_recent_pr 'gh pr list --state open --author "@me" --json number | jq -r ".[0].number" | xargs gh pr view --web'
 alias gp 'git push origin HEAD'
 alias open_repo 'gh repo view --web'
+alias ls 'eza --icons --group-directories-first --git --color=always'
 
 # user defined aliases that are dependent on environment variables
 function credit_test_user

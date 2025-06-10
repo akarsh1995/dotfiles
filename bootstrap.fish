@@ -1,8 +1,8 @@
 #!/usr/bin/env fish
 
-set -x email "akarsh.1995.02@gmail.com"
+set -x email "25827628+akarsh1995@users.noreply.github.com"
 
-set gpg_key F3BDDBCEEEE18160
+set gpg_key DBF7D3AFC7E8B220
 
 # if not brew installed already then install it
 if test ! -f /opt/homebrew/bin/brew
@@ -47,7 +47,6 @@ echo "
 [tag]
 	gpgSign = true
 " >$HOME/.gitconfig
-
 
 # install nnn plugins if plugins directory empty
 if test ! -d $HOME/.config/nnn/plugins

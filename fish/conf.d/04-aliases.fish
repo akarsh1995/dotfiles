@@ -33,3 +33,6 @@ end
 function teld
     docker-compose -f $AYR_DIR/telemetry/docker-compose.telemetry.yml down $argv
 end
+
+abbr bhique 'psql_json --pretty -c (echo $DBEE_CONNECTIONS | jq -r ".[0].url") -t'
+

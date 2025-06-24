@@ -1,5 +1,6 @@
 alias ghcs 'gh copilot suggest -t shell'
 alias open_recent_pr 'gh pr list --state open --author "@me" --json number | jq -r ".[0].number" | xargs gh pr view --web'
+alias create_pr 'gh pr create --base main --head HEAD'
 alias gp 'git push origin HEAD'
 alias open_repo 'gh repo view --web'
 alias ls 'eza --icons --group-directories-first --git --color=always'
@@ -35,4 +36,3 @@ function teld
 end
 
 abbr bhique 'psql_json --pretty -c (echo $DBEE_CONNECTIONS | jq -r ".[0].url") -t'
-

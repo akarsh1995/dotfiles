@@ -92,7 +92,7 @@ function __psql_json_get_columns
             set -l arg $cmd[$i]
             if string match -q -- "-*" $arg
                 # This is a flag, check if it takes a value
-                if test "$arg" = -c; or test "$arg" = --connection; or test "$arg" = -t; or test "$arg" = --table; or test "$arg" = -w; or test "$arg" = --where
+                if test "$arg" = -c; or test "$arg" = --connection; or test "$arg" = -t; or test "$arg" = --table; or test "$arg" = -w; or test "$arg" = --where; or test "$arg" = -u; or test "$arg" = --update
                     set skip_next true
                 end
                 continue
@@ -127,15 +127,19 @@ end
 complete -c psql_json -s c -l connection -d "Database connection string" -r
 complete -c psql_json -s t -l table -d "Table name to query" -r -f -a "(__psql_json_get_tables)"
 complete -c psql_json -s w -l where -d "WHERE clause for table queries" -r -f -a "(__psql_json_get_columns)"
+complete -c psql_json -s u -l update -d "Column assignments for UPDATE operations" -r -f -a "(__psql_json_get_columns)"
 complete -c psql_json -l tsv -d "Output as TSV for spreadsheets"
 complete -c psql_json -s h -l help -d "Show help message"
 
 # Column name completion for WHERE clause arguments
 complete -c psql_json -n "__fish_seen_subcommand_from -w --where" -f -a "(__psql_json_get_columns)" -d "Column name"
 
+# Column name completion for UPDATE clause arguments
+complete -c psql_json -n "__fish_seen_subcommand_from -u --update" -f -a "(__psql_json_get_columns)" -d "Column name"
+
 # Common connection string examples
 complete -c psql_json -n "__fish_seen_subcommand_from -c --connection" -a "'postgres://user:password@localhost:5432/database'" -d "Connection string template"
 complete -c psql_json -n "__fish_seen_subcommand_from -c --connection" -a "'postgres://postgres:postgres@localhost:5432/postgres'" -d "Default PostgreSQL connection"
 
 # Table name completion for positional argument (when no -t flag is used)
-complete -c psql_json -n "not __fish_seen_subcommand_from -t --table -c --connection -w --where --tsv -h --help" -a "(__psql_json_get_tables)" -d "Table name"
+complete -c psql_json -n "not __fish_seen_subcommand_from -t --table -c --connection -w --where -u --update --tsv -h --help" -a "(__psql_json_get_tables)" -d "Table name"

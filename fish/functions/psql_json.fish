@@ -4,6 +4,7 @@ function psql_json
     set -l connection_string ""
     set -l table ""
     set -l where_filters ""
+    set -l update_assignments ""
     set -l help false
     set -l tsv false
     
@@ -41,6 +42,18 @@ function psql_json
                     set where_filters $where_filters $argv[$i]
                     set i (math $i + 1)
                 end
+            case "-u" "--update"
+                # Collect all remaining arguments after --update as assignment conditions
+                set i (math $i + 1)
+                while test $i -le (count $argv)
+                    # Stop if we hit another flag
+                    if string match -q -- "-*" $argv[$i]
+                        set i (math $i - 1)  # Back up one to reprocess this arg
+                        break
+                    end
+                    set update_assignments $update_assignments $argv[$i]
+                    set i (math $i + 1)
+                end
             case "--tsv"
                 set tsv true
             case "-h" "--help"
@@ -67,6 +80,9 @@ function psql_json
         echo "                           Smart syntax: column=value column>value column~pattern"
         echo "                           Use 'OR' to separate OR groups"
         echo "                           Operators: = != > < >= <= ~ (ILIKE) !~ (NOT ILIKE)"
+        echo "  -u, --update ASSIGNMENTS Column assignments for UPDATE operations"
+        echo "                           Smart syntax: column=value column2=value2"
+        echo "                           Requires --where clause for safety"
         echo "  --tsv                    Output as TSV (Tab-Separated Values) for spreadsheets"
         echo "  -h, --help              Show this help message"
         echo ""
@@ -85,6 +101,12 @@ function psql_json
         echo ""
         echo "  # With smart filters (Mixed AND/OR)"
         echo "  psql_json loans -w margin_issued=5 created_at>2025-02-01 OR asset~%BTC%"
+        echo ""
+        echo "  # Update records with WHERE clause"
+        echo "  psql_json users -u name=John email=john@example.com -w id=123"
+        echo ""
+        echo "  # Update multiple records"
+        echo "  psql_json products -u price=99.99 stock=50 -w category=electronics"
         echo ""
         echo "  # Traditional WHERE clause"
         echo "  psql_json -c 'postgres://user:pass@localhost:5432/mydb' \\"
@@ -131,6 +153,12 @@ function psql_json
         return 1
     end
     
+    # Validate UPDATE operations require WHERE clause
+    if test -n "$update_assignments"; and test -z "$where_filters"
+        echo "Error: UPDATE operations require a WHERE clause for safety. Use -w option to specify conditions." >&2
+        return 1
+    end
+    
     # Process WHERE filters if provided
     set -l where_clause ""
     if test -n "$where_filters"
@@ -141,13 +169,51 @@ function psql_json
         end
     end
 
-    # Auto-generate row_to_json query for table
-    set -l query "SELECT row_to_json(t) FROM $table t"
-    if test -n "$where_clause"
-        set query "$query WHERE $where_clause"
+    # Build query based on operation type
+    if test -n "$update_assignments"
+        # Process UPDATE assignments
+        set -l set_clause (_psql_json_parse_assignments $update_assignments)
+        if test $status -ne 0
+            echo "Error: Failed to parse UPDATE assignments" >&2
+            return 1
+        end
+        
+        # Build UPDATE query - just count updated rows
+        set query "UPDATE $table SET $set_clause WHERE $where_clause"
+    else
+        # Auto-generate row_to_json query for table
+        set -l query_temp "SELECT row_to_json(t) FROM $table t"
+        if test -n "$where_clause"
+            set query "$query_temp WHERE $where_clause"
+        else
+            set query $query_temp
+        end
     end
-    
+
     # Execute the query
+    if test -n "$update_assignments"
+        # For UPDATE operations, capture both result and row count
+        set -l result (psql -t "$connection_string" -c "$query" 2>&1)
+        set -l psql_status $status
+        
+        if test $psql_status -ne 0
+            echo "Error executing UPDATE query:" >&2
+            echo $result >&2
+            return 1
+        end
+        
+        # Get the number of updated rows from psql output
+        set -l row_count (psql "$connection_string" -c "$query" 2>&1 | grep "UPDATE" | string replace "UPDATE " "")
+        
+        if test -n "$row_count"
+            echo "Updated $row_count rows"
+        else
+            echo "Update completed (0 rows affected)"
+        end
+        return 0
+    end
+
+    # For SELECT operations, process normally
     set -l result (psql -t "$connection_string" -c "$query" 2>&1)
     set -l psql_status $status
     
@@ -317,4 +383,70 @@ function _psql_json_parse_single_filter
     
     # If no operator found, return error
     return 1
+end
+
+# Helper function to parse UPDATE assignments into SQL SET clause
+function _psql_json_parse_assignments
+    set -l assignments $argv
+    set -l set_parts
+    
+    # Process each assignment
+    for assignment in $assignments
+        if test -z "$assignment"
+            continue
+        end
+        
+        # Parse assignment (only supports = operator for SET)
+        if string match -q "*=*" -- $assignment
+            set -l parts (string split -m 1 "=" $assignment)
+            if test (count $parts) -eq 2
+                set -l column (string trim $parts[1])
+                set -l value (string trim $parts[2])
+                
+                # Check if value is already quoted (single quotes)
+                set -l is_quoted false
+                if string match -q "'*'" -- $value
+                    set is_quoted true
+                    # Remove the surrounding quotes for processing
+                    set value (string sub -s 2 -e -1 $value)
+                end
+                
+                # Handle values that were originally quoted - treat as strings
+                if $is_quoted
+                    set value "'$value'"
+                # Handle NULL values (only if not originally quoted)
+                else if test "$value" = "NULL"; or test "$value" = "null"
+                    set value "NULL"
+                # Handle numeric values (don't quote if not originally quoted)
+                else if string match -q -r "^[0-9]+(\.[0-9]+)?\$" -- $value
+                    # Keep numeric values unquoted
+                # Handle boolean values (only if not originally quoted)
+                else if test "$value" = "true"; or test "$value" = "false"
+                    # Keep boolean values unquoted
+                # Handle date/timestamp values
+                else if string match -q -r "^[0-9]{4}-[0-9]{2}-[0-9]{2}" -- $value
+                    set value "'$value'"
+                # Handle special PostgreSQL functions
+                else if test "$value" = "now()"; or test "$value" = "NOW()"; or test "$value" = "current_timestamp"
+                    # Keep function calls unquoted
+                # Quote everything else
+                else
+                    set value "'$value'"
+                end
+                
+                set set_parts $set_parts "$column = $value"
+            end
+        else
+            echo "Error: Invalid assignment format '$assignment'. Use column=value syntax." >&2
+            return 1
+        end
+    end
+    
+    if test (count $set_parts) -gt 0
+        echo (string join ", " $set_parts)
+        return 0
+    else
+        echo "Error: No valid assignments found" >&2
+        return 1
+    end
 end

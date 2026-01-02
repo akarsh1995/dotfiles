@@ -12,6 +12,7 @@
 !fish/completions/gpg_backup.fish
 !fish/completions/epoch_to_date.fish
 !fish/completions/psql_json.fish
+!fish/completions/psql_clear_tables.fish
 
 !fish/conf.d/
 !fish/conf.d/01-variables.fish
@@ -41,6 +42,7 @@
 !fish/functions/gpg_backup.fish
 !fish/functions/epoch_to_date.fish
 !fish/functions/psql_json.fish
+!fish/functions/psql_clear_tables.fish
 
 
 !fish/themes/

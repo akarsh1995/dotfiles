@@ -43,7 +43,7 @@
 !fish/functions/epoch_to_date.fish
 !fish/functions/psql_json.fish
 !fish/functions/psql_clear_tables.fish
-
+!fish/functions/metabase_session_key_setter.fish
 
 !fish/themes/
 

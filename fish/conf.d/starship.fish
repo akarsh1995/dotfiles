@@ -1,1 +1,1 @@
-source (/opt/homebrew/bin/starship init fish --print-full-init | psub)
+source (starship init fish --print-full-init | psub)

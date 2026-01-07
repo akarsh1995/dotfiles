@@ -52,7 +52,8 @@ end
 
 if test -n "$FONT_DIR"
     # Check if font is already installed
-    if not ls $FONT_DIR/JetBrainsMono*Nerd*.ttf &>/dev/null
+    set -l font_files $FONT_DIR/JetBrainsMono*Nerd*.ttf
+    if not test -f $font_files[1]
         echo "Installing JetBrainsMono Nerd Font..."
         
         # Download font

@@ -19,7 +19,37 @@ esac
 
 echo "Detected OS: $OS_TYPE"
 
-# Add Homebrew to PATH if it exists (needed for Linux)
+# Step 1: Ensure git is installed (required for Homebrew installation)
+if ! command -v git &>/dev/null; then
+  echo "Git is not installed. Installing via system package manager..."
+  if [ "$OS_TYPE" = "Linux" ]; then
+    if command -v apt-get &>/dev/null; then
+      sudo apt-get update && sudo apt-get install -y git
+    elif command -v dnf &>/dev/null; then
+      sudo dnf install -y git
+    elif command -v yum &>/dev/null; then
+      sudo yum install -y git
+    elif command -v pacman &>/dev/null; then
+      sudo pacman -Sy --noconfirm git
+    else
+      echo "Error: Unsupported Linux distribution. Please install git manually."
+      exit 1
+    fi
+  elif [ "$OS_TYPE" = "macOS" ]; then
+    # On macOS, try to trigger Xcode Command Line Tools installation
+    echo "Git not found. Attempting to install Xcode Command Line Tools..."
+    xcode-select --install 2>/dev/null || echo "Command Line Tools may already be installed."
+    echo "Please complete the Xcode Command Line Tools installation if prompted, then run this script again."
+    exit 1
+  else
+    echo "Error: Unsupported operating system. Please install git manually."
+    exit 1
+  fi
+else
+  echo "Git is already installed."
+fi
+
+# Add Homebrew to PATH if it exists
 if [ -d "/home/linuxbrew/.linuxbrew/bin" ]; then
   export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
 fi
@@ -58,19 +88,10 @@ ensure_brew() {
   echo "Using Homebrew at: $BREW_CMD"
 }
 
-# Step 1: Backup existing .config directory
+# Step 2: Backup existing .config directory
 if [ -d "$CONFIG_DIR" ]; then
   echo "Backing up existing .config directory to $BACKUP_DIR..."
   mv "$CONFIG_DIR" "$BACKUP_DIR"
-fi
-
-# Step 2: Ensure git is installed
-if ! command -v git &>/dev/null; then
-  echo "Git is not installed. Installing..."
-  ensure_brew
-  $BREW_CMD install git
-else
-  echo "Git is already installed."
 fi
 
 # Step 3: Clone the repository

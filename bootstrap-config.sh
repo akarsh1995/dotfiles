@@ -91,6 +91,11 @@ ensure_brew() {
 # Step 2: Backup existing .config directory
 if [ -d "$CONFIG_DIR" ]; then
   echo "Backing up existing .config directory to $BACKUP_DIR..."
+  # Remove backup directory if it already exists
+  if [ -d "$BACKUP_DIR" ]; then
+    echo "Removing existing backup directory..."
+    rm -rf "$BACKUP_DIR"
+  fi
   mv "$CONFIG_DIR" "$BACKUP_DIR"
 fi
 

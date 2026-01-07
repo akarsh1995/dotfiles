@@ -25,7 +25,6 @@ if test -f $HOME/.config/brew/brew-packages
     set installed_packages ( $BREW_CMD list --formula | sed 's/@.*//' )
     for package in (cat $HOME/.config/brew/brew-packages)
         if not contains $package $installed_packages
-            sudo -v
             $BREW_CMD install $package
         else
             echo "$package is already installed"
@@ -75,11 +74,34 @@ if test -f $HOME/.config/fish/fish_plugins
         if not contains $plugin $installed_plugins
             # Install the plugin using fisher
             echo "Installing $plugin..."
-            fisher add $plugin
+            fisher install $plugin
         else
             echo "$plugin is already installed"
         end
     end
 else
     echo "fish_plugins file not found, skipping fisher plugins installation"
+end
+
+# Set fish as default shell
+set FISH_PATH (which fish)
+if test -n "$FISH_PATH"
+    echo "Setting fish as default shell..."
+    
+    # Check if fish is already in /etc/shells
+    if not grep -q "^$FISH_PATH\$" /etc/shells
+        echo "Adding fish to /etc/shells..."
+        echo $FISH_PATH | sudo tee -a /etc/shells
+    end
+    
+    # Check if fish is already the default shell
+    if test "$SHELL" != "$FISH_PATH"
+        echo "Changing default shell to fish..."
+        chsh -s $FISH_PATH
+        echo "Default shell changed to fish. Please log out and log back in for changes to take effect."
+    else
+        echo "Fish is already the default shell"
+    end
+else
+    echo "Error: Could not find fish executable"
 end

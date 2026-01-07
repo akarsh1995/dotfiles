@@ -4,21 +4,29 @@ set -x email "25827628+akarsh1995@users.noreply.github.com"
 
 set gpg_key DBF7D3AFC7E8B220
 
-# if not brew installed already then install it
-if test ! -f /opt/homebrew/bin/brew
-    echo "Installing Homebrew..."
-
-    # Install Homebrew
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# Find the correct brew path
+if command -v brew &>/dev/null
+    set BREW_CMD brew
+else if test -f /opt/homebrew/bin/brew
+    set BREW_CMD /opt/homebrew/bin/brew
+else if test -f /usr/local/bin/brew
+    set BREW_CMD /usr/local/bin/brew
+else if test -f /home/linuxbrew/.linuxbrew/bin/brew
+    set BREW_CMD /home/linuxbrew/.linuxbrew/bin/brew
+else
+    echo "Error: Homebrew not found. Please install Homebrew first."
+    exit 1
 end
+
+echo "Using Homebrew at: $BREW_CMD"
 
 # install brew packages
 if test -f $HOME/.config/brew/brew-packages
-    set installed_packages ( /opt/homebrew/bin/brew list --formula | sed 's/@.*//' )
+    set installed_packages ( $BREW_CMD list --formula | sed 's/@.*//' )
     for package in (cat $HOME/.config/brew/brew-packages)
         if not contains $package $installed_packages
             sudo -v
-            /opt/homebrew/bin/brew install $package
+            $BREW_CMD install $package
         else
             echo "$package is already installed"
         end

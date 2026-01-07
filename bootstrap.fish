@@ -52,8 +52,7 @@ end
 
 if test -n "$FONT_DIR"
     # Check if font is already installed
-    set -l font_files $FONT_DIR/JetBrainsMono*Nerd*.ttf
-    if not test -f $font_files[1]
+    if test (count $FONT_DIR/JetBrainsMono*Nerd*.ttf 2>/dev/null) -eq 0
         echo "Installing JetBrainsMono Nerd Font..."
         
         # Download font
@@ -130,6 +129,7 @@ end
 # Set fish as default shell
 set FISH_PATH (which fish)
 if test -n "$FISH_PATH"
+    echo "Fish executable found at: $FISH_PATH"
     echo "Setting fish as default shell..."
     
     # Check if fish is already in /etc/shells

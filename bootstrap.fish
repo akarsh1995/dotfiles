@@ -34,6 +34,49 @@ else
     echo "brew-packages file not found, skipping brew packages installation"
 end
 
+# Install JetBrainsMono Nerd Font if not already installed
+echo "Checking for JetBrainsMono Nerd Font..."
+
+# Detect OS and set font directory
+set OS_TYPE (uname -s)
+switch $OS_TYPE
+    case Darwin
+        set FONT_DIR "$HOME/Library/Fonts"
+    case Linux
+        set FONT_DIR "$HOME/.local/share/fonts"
+        mkdir -p $FONT_DIR
+    case '*'
+        echo "Unknown OS, skipping font installation"
+        set FONT_DIR ""
+end
+
+if test -n "$FONT_DIR"
+    # Check if font is already installed
+    if not ls $FONT_DIR/JetBrainsMono*Nerd*.ttf &>/dev/null
+        echo "Installing JetBrainsMono Nerd Font..."
+        
+        # Download font
+        set TEMP_DIR (mktemp -d)
+        curl -L -o $TEMP_DIR/JetBrainsMono.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/JetBrainsMono.zip
+        
+        # Extract and install
+        unzip -q $TEMP_DIR/JetBrainsMono.zip -d $TEMP_DIR/JetBrainsMono
+        cp $TEMP_DIR/JetBrainsMono/*.ttf $FONT_DIR/
+        
+        # Update font cache on Linux
+        if test "$OS_TYPE" = "Linux"
+            fc-cache -fv
+        end
+        
+        # Cleanup
+        rm -rf $TEMP_DIR
+        
+        echo "JetBrainsMono Nerd Font installed successfully"
+    else
+        echo "JetBrainsMono Nerd Font is already installed"
+    end
+end
+
 begin
     # This script sets up a cron jobs to automatically commit and push changes to the .config directory every hour.
     # echo "0 18 * * * $(which fish) -c 'cd $HOME/.config && if test (git status --short | wc -l) -gt 0; git add -A; git commit -m \"\$(date +'\%Y-\%m-\%d')\"; git push origin main; end'"

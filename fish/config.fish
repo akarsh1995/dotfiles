@@ -5,3 +5,6 @@ if status is-interactive
     set -x PSQL_CONNECTION (echo $DBEE_CONNECTIONS | jq -r ".[0].url")
     alias sync_private_fork "git fetch upstream && git rebase upstream/main"
 end
+
+# Added by Antigravity
+fish_add_path /Users/akarshjain/.antigravity/antigravity/bin

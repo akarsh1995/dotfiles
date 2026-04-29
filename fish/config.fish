@@ -1,5 +1,4 @@
 if status is-interactive
-    generate_docker_aliases $AYR_DIR/integration/docker-compose.yml be-lite
     fzf_configure_bindings --directory=\cf --variables=\e\cv
     fish_add_path -g $HOME/.local/bin
     set -x PSQL_CONNECTION (echo $DBEE_CONNECTIONS | jq -r ".[0].url")
@@ -7,4 +6,7 @@ if status is-interactive
 end
 
 # Added by Antigravity
-fish_add_path /Users/akarshjain/.antigravity/antigravity/bin
+fish_add_path $HOME/.antigravity/antigravity/bin
+fish_add_path $HOME/Programming/sms-notifier/python
+alias request_totp "sms_listener.py request"
+alias request_totp_aws "request_totp aws"

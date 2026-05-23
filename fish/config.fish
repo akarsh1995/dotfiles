@@ -11,3 +11,6 @@ fish_add_path $HOME/Programming/sms-notifier/python
 fish_add_path $HOME/sessionmanager-bundle/sessionmanager-bundle/bin
 alias request_totp "sms_listener.py request"
 alias request_totp_aws "request_totp aws"
+
+# Added by codebase-memory-mcp install
+export PATH="/Users/akarshjain/.local/bin:$PATH"

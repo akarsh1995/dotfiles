@@ -9,6 +9,9 @@ return {
     servers = {
       -- postgres_lsp = { enabled = true },
       sqls = { enabled = true },
+      ty = {
+        cmd = { "ty", "server" },
+      },
       vtsls = {
         settings = {
           typescript = {

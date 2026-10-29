@@ -46,25 +46,25 @@ function __fish_ai_tab_replace --description "Replace ai command with generated 
     if string match -qr '^ai\s' $line
         # Strip the leading "ai "
         set -l rest (string replace -r '^ai\s*' '' $line)
-    # Gather additional context to pass to the Python helper via AI_EXTRA_CONTEXT
-    # Current working directory
-    set -l cwd (pwd)
-    # Git branch (if inside a repository)
-    set -l git_branch ''
-    if test -d .git
-        set -l git_branch (git rev-parse --abbrev-ref HEAD ^/dev/null 2>/dev/null)
-    end
-    # Detect available package managers
-    set -l pkg_mgrs ''
-    for mgr in brew apt yum pacman dnf npm pip
-        if type -q $mgr
-            set pkg_mgrs $pkg_mgrs $mgr
+        # Gather additional context to pass to the Python helper via AI_EXTRA_CONTEXT
+        # Current working directory
+        set -l cwd (pwd)
+        # Git branch (if inside a repository)
+        set -l git_branch ''
+        if test -d .git
+            set -l git_branch (git rev-parse --abbrev-ref HEAD ^/dev/null 2>/dev/null)
         end
-    end
-    # Build a semicolon‑separated context string (only whitelisted env var LANG)
-    set -gx AI_EXTRA_CONTEXT "cwd=$cwd;git_branch=$git_branch;pkg_mgrs=(string join ',' $pkg_mgrs);LANG=$LANG"
-    # Call the helper, passing the natural language description
-    set -l generated (python3 /Users/akarshjain/Programming/cli-ai-tool/ai_helper.py "$rest")
+        # Detect available package managers
+        set -l pkg_mgrs ''
+        for mgr in brew apt yum pacman dnf npm pip
+            if type -q $mgr
+                set pkg_mgrs $pkg_mgrs $mgr
+            end
+        end
+        # Build a semicolon‑separated context string (only whitelisted env var LANG)
+        set -gx AI_EXTRA_CONTEXT "cwd=$cwd;git_branch=$git_branch;pkg_mgrs=(string join ',' $pkg_mgrs);LANG=$LANG"
+        # Call the helper, passing the natural language description
+        set -l generated (python3 /Users/akarshjain/Programming/cli-ai-tool/ai_helper.py "$rest")
         # Replace the entire command line with the generated command
         commandline -r "$generated"
     else
@@ -75,3 +75,22 @@ end
 
 # Bind Tab to the custom function (preserves normal completions for other commands)
 bind \t __fish_ai_tab_replace
+
+function killports --description "Kill processes listening on a port range"
+    if test (count $argv) -ne 2
+        echo "Usage: killports <start_port> <end_port>"
+        return 1
+    end
+
+    set -l start $argv[1]
+    set -l end $argv[2]
+
+    for port in (seq $start $end)
+        set -l pids (lsof -tiTCP:$port -sTCP:LISTEN 2>/dev/null | sort -u)
+
+        if test (count $pids) -gt 0
+            echo "Killing processes on port $port: $pids"
+            kill -9 $pids 2>/dev/null
+        end
+    end
+end

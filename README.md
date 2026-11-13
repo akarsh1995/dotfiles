@@ -77,11 +77,13 @@ fisher-files pwstore    # filter by plugin name
 ```
 
 `scripts/sync-fisher-ignores.fish` reads those variables and rewrites a
-managed block in `.git/info/exclude` (local to this clone, so nothing is
-committed). `bootstrap.fish` runs it after installing plugins and
-`config-backup` runs it before staging, so a plugin that adds files later
-stays out of the repo without editing any ignore rules. `.gitignore` keeps
-plugin-name globs as a backstop for clones without a fisher manifest.
+managed block at the end of `.gitignore` (the file ignores everything with
+`*` and re-includes `fish/**`, and `.gitignore` beats `.git/info/exclude`, so
+the block has to live where it can win). `bootstrap.fish` runs it after
+installing plugins and `config-backup` runs it before staging, so a plugin
+that adds files later stays out of the repo without editing any ignore rules.
+The plugin-name globs earlier in `.gitignore` remain as a backstop for clones
+without a fisher manifest.
 
 The convention in the plugin repos themselves:
 

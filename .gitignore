@@ -17,9 +17,11 @@ fish/**/.DS_Store
 fish/secure/**/*.json
 fish/secure/**/*.txt
 
-# Fisher-managed plugins (restored by bootstrap from fish_plugins)
-# Private helpers are prefixed with the plugin name; public commands keep the
-# command filename so Fish can autoload them.
+# Fisher-managed plugins (restored by bootstrap from fish_plugins).
+# The authoritative list is generated from fisher's manifest into the managed
+# block at the end of this file by scripts/sync-fisher-ignores.fish; these
+# globs are a backstop. Private helpers are prefixed with the plugin name;
+# public commands keep the command filename so Fish can autoload them.
 fish/functions/_fzf_*.fish
 fish/functions/fzf_configure_bindings.fish
 fish/functions/_pwstore_*.fish
@@ -95,3 +97,42 @@ scripts/crontab.backup.*
 !brew/
 !brew/brew-packages
 
+# >>> fisher plugin files (managed by scripts/sync-fisher-ignores.fish)
+# Generated from fisher universal variables. Do not edit by hand.
+fish/completions/filecrypt.fish
+fish/completions/fzf_configure_bindings.fish
+fish/completions/pw.fish
+fish/completions/secret.fish
+fish/conf.d/filecrypt.fish
+fish/conf.d/fzf.fish
+fish/conf.d/pwstore.fish
+fish/conf.d/secret.fish
+fish/functions/_fzf_configure_bindings_help.fish
+fish/functions/_fzf_extract_var_info.fish
+fish/functions/_fzf_preview_changed_file.fish
+fish/functions/_fzf_preview_file.fish
+fish/functions/_fzf_report_diff_type.fish
+fish/functions/_fzf_report_file_type.fish
+fish/functions/_fzf_search_directory.fish
+fish/functions/_fzf_search_git_log.fish
+fish/functions/_fzf_search_git_status.fish
+fish/functions/_fzf_search_history.fish
+fish/functions/_fzf_search_processes.fish
+fish/functions/_fzf_search_variables.fish
+fish/functions/_fzf_wrapper.fish
+fish/functions/_secret_add.fish
+fish/functions/_secret_complete.fish
+fish/functions/_secret_config.fish
+fish/functions/_secret_delete.fish
+fish/functions/_secret_edit.fish
+fish/functions/_secret_export.fish
+fish/functions/_secret_get.fish
+fish/functions/_secret_get_gpg_recipient.fish
+fish/functions/_secret_help.fish
+fish/functions/_secret_list.fish
+fish/functions/_secret_load.fish
+fish/functions/filecrypt.fish
+fish/functions/fzf_configure_bindings.fish
+fish/functions/pw.fish
+fish/functions/secret.fish
+# <<< fisher plugin files

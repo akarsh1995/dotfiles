@@ -72,17 +72,19 @@ function __refresh_manifests
     if command -q brew
         # installed_on_request keeps explicitly installed tools that also happen
         # to be dependencies of others (fish, gnupg, ...). Fall back to leaves.
+        set -l formulae
+        set -l casks
         if command -q jq
-            set -l formulae (brew info --json=v2 --installed --formula 2>/dev/null \
+            set formulae (brew info --json=v2 --installed --formula 2>/dev/null \
                 | jq -r '.formulae[] | select(.installed[0].installed_on_request == true) | .full_name' \
                 | sort)
-            set -l casks (brew info --json=v2 --installed --cask 2>/dev/null \
+            set casks (brew info --json=v2 --installed --cask 2>/dev/null \
                 | jq -r '.casks[].full_token' \
                 | sort \
                 | string replace -r '^' 'cask:')
         else
-            set -l formulae (brew leaves | sort)
-            set -l casks (brew list --cask 2>/dev/null | sort | string replace -r '^' 'cask:')
+            set formulae (brew leaves | sort)
+            set casks (brew list --cask 2>/dev/null | sort | string replace -r '^' 'cask:')
         end
 
         set -l packages $formulae $casks

@@ -81,8 +81,94 @@ begin
     # This script sets up a cron jobs to automatically commit and push changes to the .config directory every hour.
     # echo "0 18 * * * $(which fish) -c 'cd $HOME/.config && if test (git status --short | wc -l) -gt 0; git add -A; git commit -m \"\$(date +'\%Y-\%m-\%d')\"; git push origin main; end'"
     echo "0 18 * * * $(which fish) -c config_auto_commit_and_push"
-    echo "0 0 * * * $(which docker) container prune -f"
 end | crontab -
+
+# >>> launchd cleanup agents
+# Cleanup runs via launchd rather than cron: launchd fires missed jobs when the
+# machine wakes, cron silently skips them. The cadence guards (every other
+# Monday / first Monday) live in cleanup-scheduled.fish, because
+# StartCalendarInterval cannot express either directly.
+if test "$OS_TYPE" = "Darwin"
+    set -l launchd_dir $HOME/Library/LaunchAgents
+    set -l cleanup_wrapper $HOME/.config/scripts/cleanup-scheduled.fish
+    set -l cleanup_log $HOME/.config/scripts/launchd.cleanup.log
+
+    mkdir -p $launchd_dir
+
+    if not test -f $cleanup_wrapper
+        echo "Warning: $cleanup_wrapper missing; skipping launchd cleanup agents"
+    else
+        set -l caches_plist '<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.akarsh.cleanup.caches</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/homebrew/bin/fish</string>
+        <string>__WRAPPER__</string>
+        <string>caches</string>
+    </array>
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Weekday</key><integer>1</integer>
+        <key>Hour</key><integer>12</integer>
+        <key>Minute</key><integer>0</integer>
+    </dict>
+    <key>StandardOutPath</key><string>__LOG__</string>
+    <key>StandardErrorPath</key><string>__LOG__</string>
+    <key>ProcessType</key><string>Background</string>
+    <key>LowPriorityIO</key><true/>
+</dict>
+</plist>'
+
+        set -l build_plist '<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.akarsh.cleanup.build</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/homebrew/bin/fish</string>
+        <string>__WRAPPER__</string>
+        <string>build</string>
+    </array>
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Weekday</key><integer>1</integer>
+        <key>Hour</key><integer>12</integer>
+        <key>Minute</key><integer>30</integer>
+    </dict>
+    <key>StandardOutPath</key><string>__LOG__</string>
+    <key>StandardErrorPath</key><string>__LOG__</string>
+    <key>ProcessType</key><string>Background</string>
+    <key>LowPriorityIO</key><true/>
+</dict>
+</plist>'
+
+        for entry in caches build
+            set -l template
+            if test $entry = caches
+                set template $caches_plist
+            else
+                set template $build_plist
+            end
+
+            set -l rendered (string replace -a __WRAPPER__ $cleanup_wrapper $template)
+            set rendered (string replace -a __LOG__ $cleanup_log $rendered)
+
+            printf '%s\n' $rendered >$launchd_dir/com.akarsh.cleanup.$entry.plist
+
+            launchctl bootout gui/(id -u)/com.akarsh.cleanup.$entry 2>/dev/null
+            launchctl bootstrap gui/(id -u) $launchd_dir/com.akarsh.cleanup.$entry.plist
+        end
+
+        echo "launchd cleanup agents installed (com.akarsh.cleanup.caches, com.akarsh.cleanup.build)"
+    end
+end
+# <<< launchd cleanup agents
 
 # This script sets up a git configuration file with user information.
 echo "

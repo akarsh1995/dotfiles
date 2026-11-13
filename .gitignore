@@ -6,49 +6,46 @@
 !alacritty/
 !alacritty/alacritty.toml
 
-# fish config related included files
+# fish config: track everything except runtime state, secrets, and generated files.
+# New hand-written fish files are picked up automatically.
 !fish/
-!fish/completions/
-!fish/completions/gpg_backup.fish
-!fish/completions/epoch_to_date.fish
-!fish/completions/psql_json.fish
-!fish/completions/psql_clear_tables.fish
+!fish/**
 
-!fish/conf.d/
-!fish/conf.d/01-variables.fish
-!fish/conf.d/02-brew.fish
-!fish/conf.d/04-aliases.fish
-!fish/conf.d/05-pwstore.fish
-!fish/conf.d/starship.fish
-!fish/conf.d/zoxide.fish
-!fish/conf.d/fnm.fish
+# Runtime state / secrets
+fish/fish_variables
+fish/**/.DS_Store
+fish/secure/**/*.json
+fish/secure/**/*.txt
 
-# Secure files and directories
-!fish/secure/
-!fish/secure/files/
-!fish/secure/files/registry.json.gpg
+# Fisher-managed plugins (restored by bootstrap from fish_plugins)
+fish/functions/_fzf_*.fish
+fish/functions/fzf_configure_bindings.fish
+fish/functions/pw.fish
+fish/functions/secret.fish
+fish/functions/filecrypt.fish
+fish/completions/fzf_configure_bindings.fish
+fish/completions/pw.fish
+fish/completions/secret.fish
+fish/completions/filecrypt.fish
+fish/conf.d/fzf.fish
+fish/conf.d/pwstore.fish
+fish/conf.d/secret.fish
+fish/conf.d/filecrypt.fish
 
-!fish/secure/secrets/
-!fish/secure/secrets/secrets.json.gpg
+# Generated locally / by third-party tools
+fish/conf.d/fish_frozen_key_bindings.fish
+fish/conf.d/rustup.fish
+fish/conf.d/terax.fish
+fish/completions/bun.fish
+fish/completions/docker.fish
 
-!fish/secure/passwords/
-!fish/secure/passwords/registry.json.gpg
-!fish/secure/passwords/README.md
-
-
-!fish/functions/
-!fish/functions/generate_docker_aliases.fish
-!fish/functions/config_auto_commit_and_push.fish
-!fish/functions/gpg_backup.fish
-!fish/functions/epoch_to_date.fish
-!fish/functions/psql_json.fish
-!fish/functions/psql_clear_tables.fish
-!fish/functions/metabase_session_key_setter.fish
-
-!fish/themes/
-
-!fish/config.fish
-!fish/fish_plugins
+# Custom scripts and scheduled jobs
+!scripts/
+!scripts/*.fish
+!scripts/git-hooks/
+!scripts/git-hooks/*
+scripts/*.log
+scripts/crontab.backup.*
 
 
 !helix/

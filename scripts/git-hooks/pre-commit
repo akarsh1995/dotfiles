@@ -1,0 +1,47 @@
+#!/usr/bin/env fish
+# Pre-commit guard for the dotfiles repo.
+#
+# - refuses plaintext files under fish/secure/ (only *.gpg belongs in git)
+# - syntax-checks staged fish files
+# - optionally runs gitleaks when it is installed
+
+set -l staged (git diff --cached --name-only --diff-filter=ACM)
+if test (count $staged) -eq 0
+    exit 0
+end
+
+set -l failed 0
+
+for file in $staged
+    if string match -q 'fish/secure/*' $file; and not string match -q '*.gpg' $file
+        echo "pre-commit: refusing to commit plaintext secret: $file" >&2
+        set failed 1
+    end
+end
+
+for file in $staged
+    if string match -q '*.fish' $file; and test -f $file
+        if not fish -n $file
+            echo "pre-commit: syntax error in $file" >&2
+            set failed 1
+        end
+    end
+end
+
+if command -q gitleaks
+    if gitleaks protect --help >/dev/null 2>&1
+        gitleaks protect --staged --no-banner --redact
+        or begin
+            echo "pre-commit: gitleaks found a potential secret" >&2
+            set failed 1
+        end
+    else if gitleaks git --help >/dev/null 2>&1
+        gitleaks git --staged --no-banner --redact
+        or begin
+            echo "pre-commit: gitleaks found a potential secret" >&2
+            set failed 1
+        end
+    end
+end
+
+exit $failed

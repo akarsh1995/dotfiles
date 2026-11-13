@@ -107,14 +107,14 @@ end
 
 function __install_launchd --argument-names target
     if test $target = autobackup; or test $target = all
-        __install_plist com.akarsh.autobackup (__autobackup_plist)
+        __install_plist com.akarsh.autobackup (__autobackup_plist | string collect)
     end
     if test $target = cleanup; or test $target = all
         if not test -f $cleanup_script
             echo "warning: $cleanup_script missing; skipping cleanup agents" >&2
         else
-            __install_plist com.akarsh.cleanup.caches (__cleanup_plist caches 12 0)
-            __install_plist com.akarsh.cleanup.build (__cleanup_plist build 12 30)
+            __install_plist com.akarsh.cleanup.caches (__cleanup_plist caches 12 0 | string collect)
+            __install_plist com.akarsh.cleanup.build (__cleanup_plist build 12 30 | string collect)
         end
     end
 end

@@ -19,6 +19,7 @@ set -g SKIP_BREW 0
 set -g SKIP_FONT 0
 set -g SKIP_SHELL 0
 set -g SKIP_AGENTS 0
+set -g INSTALL_FONT 0
 
 for arg in $argv
     switch $arg
@@ -29,6 +30,8 @@ for arg in $argv
             set DRY_RUN 1
         case --skip-brew
             set SKIP_BREW 1
+        case --install-font
+            set INSTALL_FONT 1
         case --skip-font
             set SKIP_FONT 1
         case --skip-shell
@@ -36,7 +39,7 @@ for arg in $argv
         case --skip-agents
             set SKIP_AGENTS 1
         case -h --help
-            echo "usage: bootstrap.fish [--check|--dry-run] [--skip-brew] [--skip-font] [--skip-shell] [--skip-agents]"
+            echo "usage: bootstrap.fish [--check|--dry-run] [--install-font] [--skip-brew] [--skip-font] [--skip-shell] [--skip-agents]"
             exit 0
         case '*'
             echo "bootstrap.fish: unknown option '$arg'" >&2
@@ -98,6 +101,9 @@ function __install_brew_packages
         return 0
     end
 
+    set -l installed_formulae ($BREW_CMD list --formula 2>/dev/null | string trim)
+    set -l installed_casks ($BREW_CMD list --cask 2>/dev/null | string trim)
+
     for raw in (string match -v '^#' <$manifest | string trim)
         test -z "$raw"; and continue
         set -l kind formula
@@ -106,8 +112,17 @@ function __install_brew_packages
             set kind cask
             set package (string replace 'cask:' '' $raw)
         end
+        # Manifest may carry a tap prefix; brew list prints the short name.
+        set -l short (string replace -r '^[^/]+/[^/]+/' '' $package)
 
-        if $BREW_CMD list --$kind $package >/dev/null 2>&1
+        set -l is_installed 0
+        if test $kind = cask
+            contains -- $short $installed_casks; and set is_installed 1
+        else
+            contains -- $short $installed_formulae; and set is_installed 1
+        end
+
+        if test $is_installed -eq 1
             echo "  $package already installed"
         else
             __run $BREW_CMD install --$kind $package
@@ -207,37 +222,60 @@ function __install_font
             return 0
     end
 
-    if not command -q curl; or not command -q unzip
-        __warn "curl and unzip are required for the font install; skipping"
-        return 0
-    end
-
-    set -l found (find $font_dir -maxdepth 1 -iname 'JetBrainsMono*Nerd*.ttf' 2>/dev/null | head -1)
+    set -l found (find $font_dir -iname 'JetBrainsMono*Nerd*.ttf' 2>/dev/null | head -1)
     if test -n "$found"
         echo "  JetBrainsMono Nerd Font already installed"
         return 0
     end
 
-    __run mkdir -p $font_dir
-    if test $DRY_RUN -eq 1
-        echo "[dry-run] download JetBrainsMono Nerd Font v3.4.0 into $font_dir"
+    if test $INSTALL_FONT -eq 0
+        echo "  JetBrainsMono Nerd Font not found"
+        echo "  install it later with: bootstrap.fish --install-font"
+        echo "  or: brew install --cask font-jetbrains-mono-nerd-font"
         return 0
     end
 
-    set -l tmp (mktemp -d)
-    if curl -fL --silent --show-error \
-            -o $tmp/JetBrainsMono.zip \
-            https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/JetBrainsMono.zip
-        unzip -q $tmp/JetBrainsMono.zip -d $tmp/JetBrainsMono
-        and cp $tmp/JetBrainsMono/*.ttf $font_dir/
+    if not command -q curl
+        __warn "curl is required for the font install; skipping"
+        return 0
+    end
+
+    # The release archive is ~123 MB. Fetch only the weights a terminal needs.
+    set -l dest $font_dir/jet-brains-mono
+    set -l base https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/patched-fonts/JetBrainsMono/Ligatures
+    set -l names \
+        JetBrainsMonoNerdFont-Regular.ttf \
+        JetBrainsMonoNerdFont-Bold.ttf \
+        JetBrainsMonoNerdFont-Italic.ttf \
+        JetBrainsMonoNerdFont-BoldItalic.ttf \
+        JetBrainsMonoNerdFontMono-Regular.ttf \
+        JetBrainsMonoNerdFontMono-Bold.ttf \
+        JetBrainsMonoNerdFontMono-Italic.ttf \
+        JetBrainsMonoNerdFontMono-BoldItalic.ttf
+
+    __run mkdir -p $dest
+    if test $DRY_RUN -eq 1
+        echo "[dry-run] download 8 JetBrainsMono Nerd Font files into $dest"
+        return 0
+    end
+
+    set -l ok 0
+    for name in $names
+        if curl -fL --progress-bar --connect-timeout 15 --max-time 180 -o $dest/$name $base/$name
+            set ok (math $ok + 1)
+        else
+            __warn "failed to download $name"
+        end
+    end
+
+    if test $ok -gt 0
         if test $OS_TYPE = Linux; and command -q fc-cache
             fc-cache -f >/dev/null
         end
-        echo "  installed JetBrainsMono Nerd Font"
+        echo "  installed $ok/"(count $names)" JetBrainsMono Nerd Font files in $dest"
     else
-        __warn "font download failed; skipping"
+        __warn "font download failed; install later with --install-font"
     end
-    rm -rf $tmp
 end
 
 # --------------------------------------------------------------------- nnn

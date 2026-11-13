@@ -59,7 +59,7 @@ function __owned_paths --argument-names repo
             end
         end
     end
-    printf '%s\n' $paths | sort -u
+    printf '%s\n' $paths | env LC_ALL=C sort -u
 end
 
 function __plugin_count

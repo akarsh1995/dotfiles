@@ -424,9 +424,9 @@ function __verify
 
     if test -f $repo/scripts/sync-fisher-ignores.fish
         if fish $repo/scripts/sync-fisher-ignores.fish --check >/dev/null 2>&1
-            echo "  fisher excludes current"
+            echo "  fisher ignore block current"
         else
-            __warn "fisher excludes are stale (run scripts/sync-fisher-ignores.fish)"
+            __warn "fisher ignore block is stale (run scripts/sync-fisher-ignores.fish)"
             set rc 1
         end
     end

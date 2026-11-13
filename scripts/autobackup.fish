@@ -131,9 +131,9 @@ function __commit_changes
     git -c commit.gpgsign=true commit -S -m $message >>$log_file 2>&1
     set -l rc $status
     if test $rc -ne 0
-        __log "signed commit failed (exit $rc); changes left staged for the next run"
-        __log "if this repeats, unlock the GPG key (pinentry) so launchd can sign"
-        __notify "Signed commit failed - unlock your GPG key"
+        __log "commit failed (exit $rc); changes left staged for the next run"
+        __log "check the hook output above; if it is a signing error, unlock the GPG key (pinentry)"
+        __notify "Dotfiles commit failed - see scripts/autobackup.log"
         return 1
     end
     __log "committed: $message"

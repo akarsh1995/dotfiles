@@ -79,6 +79,11 @@ say "Using Homebrew at $BREW_CMD"
 if [ -d "$CONFIG_DIR/.git" ]; then
   say "$CONFIG_DIR is already a git repository; skipping clone"
   git -C "$CONFIG_DIR" fetch --all --prune || warn "fetch failed; continuing with the local checkout"
+  if git -C "$CONFIG_DIR" diff --quiet && git -C "$CONFIG_DIR" diff --cached --quiet; then
+    git -C "$CONFIG_DIR" pull --ff-only || warn "pull failed; continuing with the local checkout"
+  else
+    warn "local changes present; not pulling"
+  fi
 else
   if [ -e "$CONFIG_DIR" ]; then
     say "Backing up existing $CONFIG_DIR to $BACKUP_DIR"

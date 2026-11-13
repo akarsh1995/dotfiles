@@ -64,6 +64,36 @@ Everything under `fish/` is tracked except:
 New hand-written functions/completions/scripts are therefore committed
 automatically — no `.gitignore` edit needed.
 
+### Fisher plugins
+
+Fisher does not mark ownership on disk; it records it in universal variables
+named `_fisher_<escaped-plugin>_files`. Those variables are the source of
+truth here:
+
+```fish
+fisher-files            # plugin -> installed files
+fisher-files --stale    # plugin-owned files git still tracks (should be empty)
+fisher-files pwstore    # filter by plugin name
+```
+
+`scripts/sync-fisher-ignores.fish` reads those variables and rewrites a
+managed block in `.git/info/exclude` (local to this clone, so nothing is
+committed). `bootstrap.fish` runs it after installing plugins and
+`config-backup` runs it before staging, so a plugin that adds files later
+stays out of the repo without editing any ignore rules. `.gitignore` keeps
+plugin-name globs as a backstop for clones without a fisher manifest.
+
+The convention in the plugin repos themselves:
+
+- public entrypoint keeps the command name — `functions/pw.fish`,
+  `functions/secret.fish`, `functions/filecrypt.fish` — because fish autoloads
+  a command only from the file named after it
+- private helpers live in their own file named after the plugin, e.g.
+  `functions/_pwstore_add.fish`, `functions/_secret_config.fish`,
+  `functions/_filecrypt_restore.fish`
+- `conf.d/<plugin>.fish` keeps the plugin name because fisher fires
+  `<plugin>_install` / `_update` / `_uninstall` events from it
+
 ## Auto backup
 
 An hourly agent commits and pushes the repo:

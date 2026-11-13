@@ -107,6 +107,29 @@ function __refresh_manifests
     end
 end
 
+function __sync_fisher_ignores
+    set -l script $repo/scripts/sync-fisher-ignores.fish
+    test -f $script; or return 0
+
+    if test $dry_run -eq 1
+        __log "fisher ignore sync skipped (dry run)"
+        return 0
+    end
+
+    set -l fish_bin (command -s fish 2>/dev/null)
+    test -n "$fish_bin"; or set fish_bin fish
+
+    set -l output ($fish_bin $script 2>&1)
+    set -l rc $status
+    if test $rc -eq 0
+        __log "$output"
+    else
+        # Never block a backup because the manifest could not be read.
+        __log "fisher ignore sync failed (exit $rc); run scripts/sync-fisher-ignores.fish"
+    end
+    return 0
+end
+
 function __commit_changes
     set -l changes (git status --porcelain)
     if test (count $changes) -eq 0
@@ -218,6 +241,7 @@ function __run
     __rotate_log
     __log "backup started"
     test $refresh_manifests -eq 1; and __refresh_manifests
+    __sync_fisher_ignores
 
     if not __commit_changes
         return 1

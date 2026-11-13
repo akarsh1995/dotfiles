@@ -292,6 +292,17 @@ function __install_nnn_plugins
 end
 
 # ------------------------------------------------------------------- fisher
+function __sync_fisher_ignores
+    set -l script $repo/scripts/sync-fisher-ignores.fish
+    if not test -f $script
+        __warn "$script missing; plugin files may show up in git status"
+        return 1
+    end
+    set -l fish_bin (command -s fish 2>/dev/null)
+    test -n "$fish_bin"; or set fish_bin (status fish-path 2>/dev/null)
+    __run $fish_bin $script
+end
+
 function __install_fisher_plugins
     set -l manifest $repo/fish/fish_plugins
     if not test -f $manifest
@@ -411,6 +422,15 @@ function __verify
         set rc 1
     end
 
+    if test -f $repo/scripts/sync-fisher-ignores.fish
+        if fish $repo/scripts/sync-fisher-ignores.fish --check >/dev/null 2>&1
+            echo "  fisher excludes current"
+        else
+            __warn "fisher excludes are stale (run scripts/sync-fisher-ignores.fish)"
+            set rc 1
+        end
+    end
+
     if test -d $repo/.git
         echo "  repo: "(git -C $repo status --short --branch | head -1)
     end
@@ -458,6 +478,7 @@ __install_nnn_plugins
 
 __say "Fisher plugins"
 __install_fisher_plugins
+__sync_fisher_ignores
 
 if test $SKIP_SHELL -eq 0
     __say "Default shell"

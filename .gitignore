@@ -18,10 +18,19 @@ fish/secure/**/*.json
 fish/secure/**/*.txt
 
 # Fisher-managed plugins (restored by bootstrap from fish_plugins)
+# Private helpers are prefixed with the plugin name; public commands keep the
+# command filename so Fish can autoload them.
 fish/functions/_fzf_*.fish
 fish/functions/fzf_configure_bindings.fish
+fish/functions/_pwstore_*.fish
+fish/functions/__pwstore_*.fish
 fish/functions/pw.fish
+fish/functions/_secret_*.fish
+fish/functions/__secret_*.fish
+fish/functions/__secretstore_*.fish
 fish/functions/secret.fish
+fish/functions/_filecrypt_*.fish
+fish/functions/__filecrypt_*.fish
 fish/functions/filecrypt.fish
 fish/completions/fzf_configure_bindings.fish
 fish/completions/pw.fish

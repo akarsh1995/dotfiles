@@ -325,14 +325,27 @@ function __set_login_shell
 
     echo "  fish: $fish_path"
     if not grep -qxF $fish_path /etc/shells
-        __run sh -c "echo '$fish_path' | sudo tee -a /etc/shells >/dev/null"
+        if test $DRY_RUN -eq 1
+            echo "[dry-run] add $fish_path to /etc/shells"
+        else if sudo -n true 2>/dev/null
+            echo $fish_path | sudo tee -a /etc/shells >/dev/null
+        else
+            __warn "cannot update /etc/shells without a password"
+            echo "  run: echo '$fish_path' | sudo tee -a /etc/shells"
+        end
     end
 
     if test "$SHELL" != "$fish_path"
-        if __run chsh -s $fish_path
-            echo "  default shell changed; log out and back in to apply"
+        if test $DRY_RUN -eq 1
+            echo "[dry-run] chsh -s $fish_path"
+        else if test -t 0
+            if chsh -s $fish_path
+                echo "  default shell changed; log out and back in to apply"
+            else
+                __warn "chsh failed; run manually: chsh -s $fish_path"
+            end
         else
-            __warn "chsh failed; run manually: chsh -s $fish_path"
+            echo "  not a terminal; run after install: chsh -s $fish_path"
         end
     else
         echo "  fish is already the default shell"

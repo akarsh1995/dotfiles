@@ -1,123 +1,105 @@
 #!/bin/bash
+# One-shot installer for a new machine.
+#
+#   curl -sS https://raw.githubusercontent.com/akarsh1995/dotfiles/main/bootstrap-config.sh | bash
+#   REPO_URL=git@github.com:akarsh1995/dotfiles.git BRANCH=main ./bootstrap-config.sh
+#
+# Existing ~/.config is moved to a timestamped backup, never deleted.
 
-sudo -v
+set -euo pipefail
 
-# Script to clone the .config repository and bootstrap the configuration
-
-# Variables
-REPO_URL="https://github.com/akarsh1995/dotfiles" # Replace with your repository URL
+REPO_URL="${REPO_URL:-https://github.com/akarsh1995/dotfiles}"
+BRANCH="${BRANCH:-main}"
 CONFIG_DIR="$HOME/.config"
-BACKUP_DIR="$HOME/.config-backup"
+STAMP="$(date +%Y%m%d-%H%M%S)"
+BACKUP_DIR="$HOME/.config-backup-$STAMP"
 
-# Detect OS
+say() { printf '==> %s\n' "$*"; }
+warn() { printf 'warning: %s\n' "$*" >&2; }
+
 OS="$(uname -s)"
 case "$OS" in
-  Linux*)  OS_TYPE="Linux";;
-  Darwin*) OS_TYPE="macOS";;
-  *)       OS_TYPE="Unknown";;
+  Darwin) OS_TYPE="macOS" ;;
+  Linux) OS_TYPE="Linux" ;;
+  *) echo "Unsupported OS: $OS" >&2; exit 1 ;;
 esac
+say "Detected $OS_TYPE"
 
-echo "Detected OS: $OS_TYPE"
-
-# Step 1: Ensure git is installed (required for Homebrew installation)
-if ! command -v git &>/dev/null; then
-  echo "Git is not installed. Installing via system package manager..."
+# ---------------------------------------------------------------- git
+if ! command -v git >/dev/null 2>&1; then
   if [ "$OS_TYPE" = "Linux" ]; then
-    if command -v apt-get &>/dev/null; then
+    if command -v apt-get >/dev/null 2>&1; then
       sudo apt-get update && sudo apt-get install -y git
-    elif command -v dnf &>/dev/null; then
+    elif command -v dnf >/dev/null 2>&1; then
       sudo dnf install -y git
-    elif command -v yum &>/dev/null; then
-      sudo yum install -y git
-    elif command -v pacman &>/dev/null; then
+    elif command -v pacman >/dev/null 2>&1; then
       sudo pacman -Sy --noconfirm git
     else
-      echo "Error: Unsupported Linux distribution. Please install git manually."
+      echo "Install git first, then re-run." >&2
       exit 1
     fi
-  elif [ "$OS_TYPE" = "macOS" ]; then
-    # On macOS, try to trigger Xcode Command Line Tools installation
-    echo "Git not found. Attempting to install Xcode Command Line Tools..."
-    xcode-select --install 2>/dev/null || echo "Command Line Tools may already be installed."
-    echo "Please complete the Xcode Command Line Tools installation if prompted, then run this script again."
-    exit 1
   else
-    echo "Error: Unsupported operating system. Please install git manually."
+    echo "Install the Xcode Command Line Tools (xcode-select --install), then re-run." >&2
     exit 1
   fi
-else
-  echo "Git is already installed."
 fi
 
-# Add Homebrew to PATH if it exists
-if [ -d "/home/linuxbrew/.linuxbrew/bin" ]; then
-  export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
-fi
-if [ -d "/opt/homebrew/bin" ]; then
-  export PATH="/opt/homebrew/bin:$PATH"
-fi
-if [ -d "/usr/local/bin" ]; then
-  export PATH="/usr/local/bin:$PATH"
+# ------------------------------------------------------------ homebrew
+export PATH="/opt/homebrew/bin:/usr/local/bin:/home/linuxbrew/.linuxbrew/bin:$PATH"
+
+BREW_CMD=""
+if command -v brew >/dev/null 2>&1; then
+  BREW_CMD="$(command -v brew)"
+elif [ -x /opt/homebrew/bin/brew ]; then
+  BREW_CMD=/opt/homebrew/bin/brew
+elif [ -x /usr/local/bin/brew ]; then
+  BREW_CMD=/usr/local/bin/brew
+elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+  BREW_CMD=/home/linuxbrew/.linuxbrew/bin/brew
 fi
 
-# Helper function to find or install Homebrew
-ensure_brew() {
-  if command -v brew &>/dev/null; then
-    BREW_CMD="brew"
-  elif [ -f "/opt/homebrew/bin/brew" ]; then
-    BREW_CMD="/opt/homebrew/bin/brew"
-  elif [ -f "/usr/local/bin/brew" ]; then
-    BREW_CMD="/usr/local/bin/brew"
-  elif [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
-    BREW_CMD="/home/linuxbrew/.linuxbrew/bin/brew"
-  else
-    echo "Installing Homebrew..."
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    # After installation, determine the correct path
-    if [ -f "/opt/homebrew/bin/brew" ]; then
-      BREW_CMD="/opt/homebrew/bin/brew"
-    elif [ -f "/usr/local/bin/brew" ]; then
-      BREW_CMD="/usr/local/bin/brew"
-    elif [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
-      BREW_CMD="/home/linuxbrew/.linuxbrew/bin/brew"
-    else
-      echo "Error: Homebrew installation failed."
-      exit 1
+if [ -z "$BREW_CMD" ]; then
+  say "Installing Homebrew"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  for candidate in /opt/homebrew/bin/brew /usr/local/bin/brew /home/linuxbrew/.linuxbrew/bin/brew; do
+    if [ -x "$candidate" ]; then
+      BREW_CMD="$candidate"
+      break
     fi
-  fi
-  echo "Using Homebrew at: $BREW_CMD"
-}
-
-# Step 2: Backup existing .config directory
-if [ -d "$CONFIG_DIR" ]; then
-  echo "Backing up existing .config directory to $BACKUP_DIR..."
-  # Remove backup directory if it already exists
-  if [ -d "$BACKUP_DIR" ]; then
-    echo "Removing existing backup directory..."
-    rm -rf "$BACKUP_DIR"
-  fi
-  mv "$CONFIG_DIR" "$BACKUP_DIR"
+  done
 fi
 
-# Step 3: Clone the repository
-echo "Cloning the configuration repository..."
-git clone "$REPO_URL" "$CONFIG_DIR"
+if [ -z "$BREW_CMD" ]; then
+  echo "Homebrew installation failed. Install it from https://brew.sh and re-run." >&2
+  exit 1
+fi
+say "Using Homebrew at $BREW_CMD"
 
-# Step 4: Install Fish shell if not already installed
-if ! command -v fish &>/dev/null; then
-  echo "Installing Fish shell..."
-  ensure_brew
-  $BREW_CMD install fish
+# -------------------------------------------------------------- clone
+if [ -d "$CONFIG_DIR/.git" ]; then
+  say "$CONFIG_DIR is already a git repository; skipping clone"
+  git -C "$CONFIG_DIR" fetch --all --prune || warn "fetch failed; continuing with the local checkout"
 else
-  echo "Fish shell is already installed."
+  if [ -e "$CONFIG_DIR" ]; then
+    say "Backing up existing $CONFIG_DIR to $BACKUP_DIR"
+    mv "$CONFIG_DIR" "$BACKUP_DIR"
+  fi
+  say "Cloning $REPO_URL ($BRANCH)"
+  git clone --branch "$BRANCH" "$REPO_URL" "$CONFIG_DIR"
 fi
 
-# Step 5: Bootstrap the configuration
-if [ -f "$CONFIG_DIR/bootstrap.fish" ]; then
-  echo "Running bootstrap script..."
-  fish "$CONFIG_DIR/bootstrap.fish"
-else
-  echo "No bootstrap script found. Configuration setup complete."
+# --------------------------------------------------------------- fish
+if ! command -v fish >/dev/null 2>&1; then
+  say "Installing fish"
+  "$BREW_CMD" install fish
+  export PATH="$(dirname "$BREW_CMD"):$PATH"
 fi
 
-echo "Configuration successfully bootstrapped!"
+if ! command -v fish >/dev/null 2>&1; then
+  echo "fish is still not on PATH. Open a new shell or add Homebrew to PATH, then run:" >&2
+  echo "  fish $CONFIG_DIR/bootstrap.fish" >&2
+  exit 1
+fi
+
+say "Running bootstrap.fish"
+exec fish "$CONFIG_DIR/bootstrap.fish" "$@"

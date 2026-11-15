@@ -143,7 +143,6 @@ cask:arduino-ide
 cask:bambu-studio
 cask:blender
 cask:discord
-cask:esengine/reasonix/reasonix
 cask:firefox
 cask:gcc-arm-embedded
 cask:google-chrome

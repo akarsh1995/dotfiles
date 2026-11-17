@@ -143,6 +143,7 @@ cask:appcleaner
 cask:arduino-ide
 cask:bambu-studio
 cask:blender
+cask:deepseek-harness
 cask:discord
 cask:firefox
 cask:gcc-arm-embedded

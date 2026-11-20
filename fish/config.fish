@@ -8,6 +8,7 @@ end
 # Added by Antigravity
 fish_add_path $HOME/.antigravity/antigravity/bin
 fish_add_path $HOME/sessionmanager-bundle/sessionmanager-bundle/bin
+fish_add_path "/Applications/DeepSeek Harness.app/Contents/Resources/runtime/cli/bin"
 
 # SMS Notifier (Rust)
 set -g SMSNOTIFIER_BIN $HOME/Programming/sms-notifier/smsnotifier
